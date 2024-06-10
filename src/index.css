@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hero-bg {
+  background-image: url('https://www.compass.com/ucfe-assets/homepage/homepage-v2.6.8/assets/hero_desktop1x_res.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  /* Default for small screens */
+}
+
+@media (min-width: 640px) {
+  .hero-bg {
+    height: 60vh;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-bg {
+    height: 70vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-bg {
+    height: 680px;
+  }
+}
+.carousel .control-arrow {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.carousel .control-arrow:hover {
+  background: none;
+}
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
