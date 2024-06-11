@@ -25,6 +25,7 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
   };
 
   const handleChange = (e) => {
+    e.preventDefault()
     setFilterValues({
       ...filterValues,
       [e.target.name]: e.target.value
@@ -51,7 +52,7 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
       filterValues.minYearBuilt, filterValues.maxYearBuilt,
       statuses
     );
-    setShowFilters(false); 
+    if(showFilters)setShowFilters(false); 
   };
 
   const handleSelectStatus = (type) =>{
@@ -63,37 +64,47 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
     }
   }
 
+  const handleMaxPriceChange = (e) =>{
+    e.preventDefault();
+    setMaxPrice(e.target.value)
+  }
+
+  const handleMinPriceChange = (e) =>{
+    e.preventDefault();
+    setMinPrice(e.target.value)
+  }
+
   return (
     <div>
       <div className="flex gap-4 items-center p-4 bg-gray-100 rounded-md shadow-sm">
         <Select
           options={[
-            { value: 100000, label: "$100k" },
-            { value: 150000, label: "$150k" },
-            { value: 200000, label: "$200k"},
-            { value: 250000, label: "$250k"},
-            { value: 300000, label: "$300k"}
+            { value: 1000000, label: "$10000k" },
+            { value: 2000000, label: "$20000k" },
+            { value: 3000000, label: "$30000k"},
+            { value: 4000000, label: "$40000k"},
+            { value: 5000000, label: "$50000k"}
           ]}
           name="minPrice"
           placeholder="$ No Min"
           className="w-full border rounded-md p-2"
           // onChange={handleChange}
-          handleChange={(e)=>setMinPrice(e.target.value)}
+          handleChange={handleMinPriceChange}
         />
         <span className="text-gray-500">-</span>
         <Select
           options={[
-            { value: 100000, label: "$100k" },
-            { value: 150000, label: "$150k" },
-            { value: 200000, label: "$200k"},
-            { value: 250000, label: "$250k"},
-            { value: 300000, label: "$300k"}
+            { value: 1000000, label: "$10000k" },
+            { value: 2000000, label: "$20000k" },
+            { value: 3000000, label: "$30000k"},
+            { value: 4000000, label: "$40000k"},
+            { value: 5000000, label: "$50000k"}
           ]}
           name="maxPrice"
           placeholder="$ No Max"
           className="w-full border rounded-md p-2"
           // onChange={handleChange}
-          handleChange={(e)=>setMaxPrice(e.target.value)}
+          handleChange={handleMaxPriceChange}
         />
         <Button
           className="border p-2 rounded-md"

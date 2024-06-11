@@ -11,15 +11,11 @@ const BuyPage = () => {
   const location = useLocation();
   const property = location.state;
   const [properties, setProperties] = useState([]);
-  const [search, setSearch] = useState(property?.city ?? null);
+  const [search, setSearch] = useState(property?.city);
   const [maxPrice, setMaxPrice] = useState();
   const [minPrice, setMinPrice] = useState();
   const [lng, setLng] = useState(-71.057083);
   const [lat, setLat] = useState(42.361145);
-
-  useEffect(() => {
-    handleSubmitClick();
-  }, []);
 
   const navigate = useNavigate();
 
@@ -29,6 +25,7 @@ const BuyPage = () => {
   const handlePlaceSelect = (data) => {
     setLat(data.lat);
     setLng(data.lng);
+    // handleSubmitClick()
   };
   const handleSubmitClick = useCallback(
     async (
@@ -61,7 +58,7 @@ const BuyPage = () => {
       };
 
       const params = buildParams({
-        // address: search,
+        address: search,
         city: search,
         minPrice,
         maxPrice,
@@ -121,27 +118,19 @@ const BuyPage = () => {
         console.log(error);
       }
     },
-    [search]
+    [search, property?.lat, property?.lng]
   );
 
   useEffect(() => {
-    if (minPrice || maxPrice) {
+    handleSubmitClick();
+  }, [handleSubmitClick]);
+
+  useEffect(() => {
+    if (minPrice !== undefined || maxPrice !== undefined) {
       handleSubmitClick(minPrice, maxPrice);
     }
-  }, [minPrice, maxPrice]);
+  }, [minPrice, maxPrice, handleSubmitClick]);
 
-  // const isValidLatLng = (lat, lng) => {
-  //   return (
-  //     typeof lat === "number" &&
-  //     typeof lng === "number" &&
-  //     !isNaN(lat) &&
-  //     !isNaN(lng)
-  //   );
-  // };
-  // const defaultLocation = { lat: 42.361145, lng: -71.057083 }; //boston
-
-  // const mapLat = parseFloat(property?.lat || properties[0]?.latitude);
-  // const mapLng = parseFloat(property?.lng || properties[0]?.longitude);
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -151,6 +140,8 @@ const BuyPage = () => {
           setSearch={setSearch}
           onSearch={handleSubmitClick}
           onPlaceSelect={handlePlaceSelect}
+          properties={properties}
+          setProperties={setProperties}
         />
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 sm:px-[90px] px-[24px] my-[32px] gap-[24px] sm:h-auto">

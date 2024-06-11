@@ -45,7 +45,6 @@ const PropertyDetails = () => {
           throw new Error("Failed to fetch property details");
         }
         const data = await response.json();
-        console.log(data);
         setProperties(data);
         setLoading(false);
       } catch (error) {

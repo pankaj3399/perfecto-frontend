@@ -1,26 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useSearch from "../../components/UseSearch/useSearch";
 
-const Navbar = ({ onPlaceSelect }) => {
+const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProperties }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === `/`;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isValueChanging, setIsValueChanging] = useState(false)
 
-  const { value, setValue, places, buildings, isLoading } = useSearch();
-
+  const { value, setValue, places, buildings, isLoading, updatedProperties } = useSearch({searchedValue, properties});
+  
+  // useEffect(()=>{
+  //   if(setSearch)setSearch(value)
+  // },[value])
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handlePlaceClick = (data) => {
-    setValue("");
+    // setValue("");
     navigate(`/buy`, {
       state: data,
     });
+    if(setSearch)setSearch(value)
+    setProperties(updatedProperties)
     onPlaceSelect(data);
+    setIsValueChanging(false)
   };
 
   const goToPropertyDetails = (propertyId) => {
@@ -28,8 +35,16 @@ const Navbar = ({ onPlaceSelect }) => {
   };
 
   const onSearch = (data) => {
+    setIsValueChanging(false)
+    if(setSearch)setSearch(value)
     onPlaceSelect(data);
   };
+
+  const handleSearchInputChange = (e) =>{
+    e.preventDefault()
+    setValue(e.target.value)
+    setIsValueChanging(true)
+  }
 
   return (
     <nav
@@ -42,9 +57,7 @@ const Navbar = ({ onPlaceSelect }) => {
           {isHome ? (
             <div
               className="text-[28px] font-semibold text-white"
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={() => navigate("/")}
             >
               PERFECTO
             </div>
@@ -52,9 +65,7 @@ const Navbar = ({ onPlaceSelect }) => {
             <div className="flex gap-8">
               <h3
                 className="text-[28px] hidden sm:block font-semibold text-black"
-                onClick={() => {
-                  navigate("/");
-                }}
+                onClick={() => navigate("/")}
               >
                 PERFECTO
               </h3>
@@ -64,7 +75,7 @@ const Navbar = ({ onPlaceSelect }) => {
                   type="text"
                   placeholder="City, Address"
                   value={value}
-                  onChange={(e) => setValue(e.target.value)}
+                  onChange={handleSearchInputChange}
                 />
                 <button
                   className="absolute top-1/2 transform -translate-y-1/2 bg-[#800080] hover:bg-[#9b59b6] p-[11px] sm:p-[11px] sm:mt-[-1.5px]"
@@ -72,7 +83,7 @@ const Navbar = ({ onPlaceSelect }) => {
                 >
                   <FaSearch className="text-white" />
                 </button>
-                {value && !isLoading && (
+                {value && !isLoading && isValueChanging && (
                   <div className="suggestion-box text-black bg-white max-h-[40vh] overflow-y-scroll border border-gray-300 rounded-lg shadow-md p-4 w-full mt-2 absolute top-full z-[1000]">
                     {places.length > 0 && (
                       <div className="mb-4 text-left">
@@ -124,9 +135,7 @@ const Navbar = ({ onPlaceSelect }) => {
           className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
             isHome ? "text-white hover:bg-[white] p-2" : "text-black"
           }`}
-          onClick={() => {
-            navigate("/buy");
-          }}
+          onClick={() => navigate("/buy")}
         >
           Buy
         </a>
@@ -148,9 +157,7 @@ const Navbar = ({ onPlaceSelect }) => {
           <div className="cursor-pointer">
             <h3
               className="sm:text-[14px] block font-semibold text-black"
-              onClick={() => {
-                navigate("/");
-              }}
+              onClick={() => navigate("/")}
             >
               PERFECTO
             </h3>
@@ -165,9 +172,7 @@ const Navbar = ({ onPlaceSelect }) => {
         <div className="flex flex-col space-y-4 p-4">
           <a
             className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
-            onClick={() => {
-              navigate("/buy");
-            }}
+            onClick={() => navigate("/buy")}
           >
             Buy
           </a>

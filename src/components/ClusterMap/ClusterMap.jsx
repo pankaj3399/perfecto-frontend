@@ -35,8 +35,8 @@ export default function Intro({latitude, longitude, properties}) {
 
 const Markers = ({ points }) => {
   const map = useMap();
-  const [markers, setMarkers] = useState({});
-  const [selectedMarkerId, setSelectedMarkerId] = useState(null);
+  const markersRef = useRef({});
+  const selectedMarkerIdRef = useRef(null);
   const clusterer = useRef(null);
   const history = useNavigate();
 
@@ -49,26 +49,36 @@ const Markers = ({ points }) => {
 
   useEffect(() => {
     clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markers));
-  }, [markers]);
+    clusterer.current?.addMarkers(Object.values(markersRef.current));
+  }, [markersRef.current]);
 
   const setMarkerRef = useCallback((marker, key) => {
-    if (marker && markers[key]) return;
-    if (!marker && !markers[key]) return;
+    if (marker && markersRef.current[key]) return;
+    if (!marker && !markersRef.current[key]) return;
 
-    setMarkers((prev) => {
-      if (marker) {
-        return { ...prev, [key]: marker };
-      } else {
-        const newMarkers = { ...prev };
-        delete newMarkers[key];
-        return newMarkers;
-      }
-    });
-  },[markers]);
+    if (marker) {
+      markersRef.current = {...markersRef.current, [key]:marker};
+    } else {  
+      const newMarkers = {...markersRef.current}
+      delete newMarkers[key];
+      markersRef.current = newMarkers
+
+    }
+
+    
+
+    setTimeout(()=>{
+      clusterer.current?.clearMarkers();
+      clusterer.current?.addMarkers(Object.values(markersRef.current));
+    },1)
+  }, []);
 
   const handleMarkerClick = (id) => {
-    setSelectedMarkerId(id === selectedMarkerId ? null : id);
+    if (id === selectedMarkerIdRef.current) {
+      selectedMarkerIdRef.current = null;
+    } else {
+      selectedMarkerIdRef.current = id;
+    }
   };
 
   const handleNavigate = (propertyID) => {
@@ -77,23 +87,21 @@ const Markers = ({ points }) => {
 
   return (
     <>
-      {points.map((point) => {
-        // console.log(point);
-        return (
-          <React.Fragment key={point?._id}>
+      {points.map((point) => (
+        <React.Fragment key={point?._id}>
           <AdvancedMarker
             position={{
               lat: parseFloat(point?.latitude),
               lng: parseFloat(point?.longitude),
             }}
-            ref={(marker) => setMarkerRef(marker, (point?._id))}
-            onClick={() => handleMarkerClick((point?._id))}
+            ref={(marker) => setMarkerRef(marker, point?._id)}
+            onClick={() => handleMarkerClick(point?._id)}
           >
-            {selectedMarkerId === parseFloat(point?._id) && (
+            {selectedMarkerIdRef.current === parseFloat(point?._id) && (
               <div className="">
                 <div
                   className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold mt-4 flex flex-col items-start cursor-pointer"
-                  onClick={() => handleNavigate((point?._id))}
+                  onClick={() => handleNavigate(point?._id)}
                 >
                   <div>
                     {point.price.toLocaleString("en-US", {
@@ -110,8 +118,7 @@ const Markers = ({ points }) => {
             <IoHome style={{ fontSize: "24px", color: "#800080" }} />
           </AdvancedMarker>
         </React.Fragment>
-        )
-      })}
+      ))}
     </>
   );
 };

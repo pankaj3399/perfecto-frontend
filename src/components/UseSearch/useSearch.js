@@ -1,18 +1,27 @@
 import { useState, useEffect, useCallback } from "react";
 import cities from "../../data/csvjson.json";
 
-const useSearch = () => {
+const useSearch = ({searchedValue, properties}) => {
   const [suggestions, setSuggestions] = useState([]);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(searchedValue);
   const [places, setPlaces] = useState([]);
   const [buildings, setBuildings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [updatedProperties, setUpdatedProperties] = useState(properties)
 
   const fetchSuggestions = async (searchValue) => {
     setIsLoading(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/search?address=${searchValue}`);
       const responseData = await response.json();
+
+      setUpdatedProperties((prevProperties) => {
+        if (JSON.stringify(prevProperties) !== JSON.stringify(responseData)) {
+          return responseData;
+        }
+        return prevProperties;
+      });
+
       const suggestedCities = cities.data?.filter((city) => {
         const regex = new RegExp(searchValue, "i");
         return regex.test(city.city);
@@ -58,6 +67,7 @@ const useSearch = () => {
     buildings,
     isLoading,
     setIsLoading,
+    updatedProperties
   };
 };
 
