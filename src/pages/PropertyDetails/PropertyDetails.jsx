@@ -39,7 +39,7 @@ const PropertyDetails = () => {
     const fetchPropertyDetails = async () => {
       try {
         const response = await fetch(
-           `${process.env.REACT_APP_API_URL}/property/${_id}`
+          `${process.env.REACT_APP_API_URL}/property/${_id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch property details");

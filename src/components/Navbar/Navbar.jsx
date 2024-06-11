@@ -1,24 +1,35 @@
 import React, { useState } from "react";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import useSearch from "../../components/UseSearch/useSearch";
 
-
-const Navbar = ({searchedValue, setSearch, onSearch}) => {
-  // const { id } = useParams();
+const Navbar = ({ onPlaceSelect }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === `/`;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
+
+  const { value, setValue, places, buildings, isLoading } = useSearch();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    setActiveDropdown(null);
   };
 
-  // const toggleDropdown = (dropdown) => {
-  //   setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
-  // };
+  const handlePlaceClick = (data) => {
+    setValue("");
+    navigate(`/buy`, {
+      state: data,
+    });
+    onPlaceSelect(data);
+  };
+
+  const goToPropertyDetails = (propertyId) => {
+    navigate(`/property-details/${propertyId}`);
+  };
+
+  const onSearch = (data) => {
+    onPlaceSelect(data);
+  };
 
   return (
     <nav
@@ -52,12 +63,57 @@ const Navbar = ({searchedValue, setSearch, onSearch}) => {
                   className="p-2 sm:p-2 sm:w-[350px] w-[200px] text-black focus:outline-none border text-[14px]"
                   type="text"
                   placeholder="City, Address"
-                  value={searchedValue}
-                  onChange={(e)=>setSearch(e.target.value)}
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
                 />
-                <button className="absolute top-1/2 transform -translate-y-1/2 bg-[#800080] hover:bg-[#9b59b6] p-[11px] sm:p-[11px] sm:mt-[-1.5px]" onClick={()=>onSearch()}> 
+                <button
+                  className="absolute top-1/2 transform -translate-y-1/2 bg-[#800080] hover:bg-[#9b59b6] p-[11px] sm:p-[11px] sm:mt-[-1.5px]"
+                  onClick={onSearch}
+                >
                   <FaSearch className="text-white" />
                 </button>
+                {value && !isLoading && (
+                  <div className="suggestion-box text-black bg-white max-h-[40vh] overflow-y-scroll border border-gray-300 rounded-lg shadow-md p-4 w-full mt-2 absolute top-full z-[1000]">
+                    {places.length > 0 && (
+                      <div className="mb-4 text-left">
+                        <div className="text-gray-800 font-bold mb-2 flex items-center gap-2">
+                          <FaSearch />
+                          Places
+                        </div>
+                        {places.map((data, index) => (
+                          <div
+                            key={index}
+                            className="p-2 cursor-pointer hover:bg-gray-100 transition ease-in-out"
+                            onClick={() => handlePlaceClick(data)}
+                          >
+                            <div className="font-semibold">{data?.city}</div>
+                            <div className="text-gray-500">
+                              {data?.state_id}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {buildings.length > 0 && (
+                      <div className="mb-4 text-left mt-4">
+                        <div className="text-gray-800 font-bold mb-2 flex gap-2 items-center">
+                          <FaSearch />
+                          Buildings
+                        </div>
+                        {buildings.map((data, index) => (
+                          <div
+                            key={index}
+                            className="p-2 cursor-pointer hover:bg-gray-100 transition ease-in-out"
+                            onClick={() => goToPropertyDetails(data.id)}
+                          >
+                            <div className="font-semibold">{data.name}</div>
+                            <div className="text-gray-500">{data.state}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -74,84 +130,6 @@ const Navbar = ({searchedValue, setSearch, onSearch}) => {
         >
           Buy
         </a>
-        {/* <a
-          href="#"
-          className={`hover:text-[#800080] text-[16px] font-semibold ${
-            isHome ? "text-white" : "text-black"
-          }`}
-        >
-          Rent
-        </a>
-        <a
-          href="#"
-          className={`hover:text-[#800080] text-[16px] font-semibold ${
-            isHome ? "text-white" : "text-black"
-          }`}
-        >
-          Sell
-        </a> */}
-        {/* <div className="relative group">
-          <a
-            href="#"
-            className={`hover:text-[#800080] flex items-center justify-center gap-2 text-[16px] font-semibold ${
-              isHome ? "text-white" : "text-black"
-            }`}
-          >
-            Compass Exclusives <FaChevronDown />
-          </a>
-          <div className="absolute left-0 mt-2 w-48 bg-white text-black hidden group-hover:block">
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Exclusive 1
-            </a>
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Exclusive 2
-            </a>
-          </div>
-        </div> */}
-        {/* <div className="relative group">
-          <a
-            href="#"
-            className={`hover:text-[#800080] flex items-center justify-center gap-2 text-[16px] font-semibold ${
-              isHome ? "text-white" : "text-black"
-            }`}
-          >
-            New Development <FaChevronDown />
-          </a>
-          <div className="absolute left-0 mt-2 w-48 bg-white text-black hidden group-hover:block">
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Development 1
-            </a>
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Development 2
-            </a>
-          </div>
-        </div> */}
-        {/* <div className="relative group">
-          <a
-            href="#"
-            className={`hover:text-[#800080] flex items-center justify-center gap-2 text-[16px] font-semibold ${
-              isHome ? "text-white" : "text-black"
-            }`}
-          >
-            Agents <FaChevronDown />
-          </a>
-          <div className="absolute left-0 mt-2 w-48 bg-white text-black hidden group-hover:block">
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Agent 1
-            </a>
-            <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-              Agent 2
-            </a>
-          </div>
-        </div>
-        <a
-          href="#"
-          className={`hover:text-[#800080] text-[16px] font-semibold ${
-            isHome ? "text-white" : "text-black"
-          }`}
-        >
-          Register/Sign In
-        </a> */}
       </div>
       <div className="md:hidden flex items-center mt-[10px]">
         <button
@@ -168,14 +146,14 @@ const Navbar = ({searchedValue, setSearch, onSearch}) => {
       >
         <div className="p-4 flex justify-between items-center">
           <div className="cursor-pointer">
-          <h3
-                className="sm:text-[14px] block font-semibold text-black"
-                onClick={() => {
-                  navigate("/");
-                }}
-              >
-                PERFECTO
-              </h3>
+            <h3
+              className="sm:text-[14px] block font-semibold text-black"
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              PERFECTO
+            </h3>
           </div>
           <button
             onClick={toggleMobileMenu}
@@ -186,85 +164,13 @@ const Navbar = ({searchedValue, setSearch, onSearch}) => {
         </div>
         <div className="flex flex-col space-y-4 p-4">
           <a
-            className="block text-black hover:hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
             onClick={() => {
               navigate("/buy");
             }}
           >
             Buy
           </a>
-          {/* <a
-            href="#"
-            className="block text-black hover:hover:text-[#800080] text-[16px] font-semibold"
-          >
-            Rent
-          </a>
-          <a
-            href="#"
-            className="block text-black hover:hover:text-[#800080] text-[16px] font-semibold"
-          >
-            Sell
-          </a> */}
-          {/* <div className="relative">
-            <button
-              onClick={() => toggleDropdown("compassExclusives")}
-              className="sm:block w-full text-left text-black hover:hover:text-[#800080] flex items-center justify-between text-[16px] font-semibold"
-            >
-              Compass Exclusives <FaChevronDown />
-            </button>
-            {activeDropdown === "compassExclusives" && (
-              <div className="mt-2 space-y-2">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Exclusive 1
-                </a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Exclusive 2
-                </a>
-              </div>
-            )}
-          </div> */}
-          {/* <div className="relative">
-            <button
-              onClick={() => toggleDropdown("newDevelopment")}
-              className="sm:block w-full text-left text-black hover:hover:text-[#800080] flex items-center justify-between text-[16px] font-semibold"
-            >
-              New Development <FaChevronDown />
-            </button>
-            {activeDropdown === "newDevelopment" && (
-              <div className="mt-2 space-y-2">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Development 1
-                </a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Development 2
-                </a>
-              </div>
-            )}
-          </div> */}
-          {/* <div className="relative">
-            <button
-              onClick={() => toggleDropdown("agents")}
-              className="sm:block w-full text-left text-black hover:text-[#800080] flex items-center justify-between text-[16px] font-semibold"
-            >
-              Agents <FaChevronDown />
-            </button>
-            {activeDropdown === "agents" && (
-              <div className="mt-2 space-y-2">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Agent 1
-                </a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-200">
-                  Agent 2
-                </a>
-              </div>
-            )}
-          </div> */}
-          {/* <a
-            href="#"
-            className="block text-black hover:text-[#800080] text-[16px] font-semibold"
-          >
-            Register/Sign In
-          </a> */}
         </div>
       </div>
     </nav>

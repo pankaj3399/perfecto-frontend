@@ -23,7 +23,7 @@ export default function Intro({latitude, longitude, properties}) {
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <Map
           center={mapCenter}
-          zoom={10}
+          defaultZoom={10}
           mapId={GOOGLE_MAPS_MAP_ID}
         >
           <Markers points={properties} />

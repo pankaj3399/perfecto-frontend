@@ -5,7 +5,7 @@ import ClusterMap from "../../components/ClusterMap/ClusterMap";
 import Filters from "../../components/Filters/Filters";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import cities from "../../data/csvjson.json"
+import cities from "../../data/csvjson.json";
 
 const BuyPage = () => {
   const location = useLocation();
@@ -14,11 +14,11 @@ const BuyPage = () => {
   const [search, setSearch] = useState(property?.city ?? null);
   const [maxPrice, setMaxPrice] = useState();
   const [minPrice, setMinPrice] = useState();
-  const [lng, setLng] = useState(-71.057083)
-  const [lat, setLat] = useState(42.361145)
+  const [lng, setLng] = useState(-71.057083);
+  const [lat, setLat] = useState(42.361145);
 
   useEffect(() => {
-      handleSubmitClick();
+    handleSubmitClick();
   }, []);
 
   const navigate = useNavigate();
@@ -26,7 +26,10 @@ const BuyPage = () => {
   const goToPropertyDetails = (_id) => {
     navigate(`/property-details/${_id}`);
   };
-
+  const handlePlaceSelect = (data) => {
+    setLat(data.lat);
+    setLng(data.lng);
+  };
   const handleSubmitClick = useCallback(
     async (
       minPrice,
@@ -46,7 +49,11 @@ const BuyPage = () => {
       const buildParams = (params) => {
         let result = {};
         for (const key in params) {
-          if (params[key] !== null && params[key] !== undefined && params[key] !== "") {
+          if (
+            params[key] !== null &&
+            params[key] !== undefined &&
+            params[key] !== ""
+          ) {
             result[key] = params[key];
           }
         }
@@ -71,17 +78,27 @@ const BuyPage = () => {
       });
 
       const queryString = Object.keys(params)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-      .join('&');
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+        )
+        .join("&");
 
-      const statusQueryString = statuses && statuses.length > 0
-        ? statuses.map(status => `status=${encodeURIComponent(status)}`).join('&')
-        : '';
+      const statusQueryString =
+        statuses && statuses.length > 0
+          ? statuses
+              .map((status) => `status=${encodeURIComponent(status)}`)
+              .join("&")
+          : "";
 
-      const finalQueryString = [queryString, statusQueryString].filter(Boolean).join('&');
+      const finalQueryString = [queryString, statusQueryString]
+        .filter(Boolean)
+        .join("&");
 
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/search?${finalQueryString}`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/search?${finalQueryString}`
+        );
         const data = response.data;
         setProperties((prevProperties) => {
           if (JSON.stringify(prevProperties) !== JSON.stringify(data)) {
@@ -89,16 +106,16 @@ const BuyPage = () => {
           }
           return prevProperties;
         });
-        if(search && search.length>0){
-          const suggestedCities = cities.data?.filter((city)=>{
-            const regex = new RegExp(search, 'i');
+        if (search && search.length > 0) {
+          const suggestedCities = cities.data?.filter((city) => {
+            const regex = new RegExp(search, "i");
             return regex.test(city.city);
-          })
-          setLat(suggestedCities[0].lat || 42.361145)
-          setLng(suggestedCities[0].lng || -71.057083)
-        }else{
-          setLat(property?.lat)
-          setLng(property?.lng)
+          });
+          setLat(suggestedCities[0].lat || 42.361145);
+          setLng(suggestedCities[0].lng || -71.057083);
+        } else {
+          setLat(property?.lat);
+          setLng(property?.lng);
         }
       } catch (error) {
         console.log(error);
@@ -106,7 +123,6 @@ const BuyPage = () => {
     },
     [search]
   );
-
 
   useEffect(() => {
     if (minPrice || maxPrice) {
@@ -134,19 +150,12 @@ const BuyPage = () => {
           searchedValue={search}
           setSearch={setSearch}
           onSearch={handleSubmitClick}
+          onPlaceSelect={handlePlaceSelect}
         />
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 sm:px-[90px] px-[24px] my-[32px] gap-[24px] sm:h-auto">
         <div>
-          <ClusterMap
-            latitude={
-              lat
-            }
-            longitude={
-              lng
-            }
-            properties={properties}
-          />{" "}
+          <ClusterMap latitude={lat} longitude={lng} properties={properties} />{" "}
         </div>
         <div>
           <div className="py-2">
@@ -166,7 +175,7 @@ const BuyPage = () => {
                   onClick={() => goToPropertyDetails(property._id)}
                   key={index}
                 >
-                  <Cards {...property } />
+                  <Cards {...property} />
                 </div>
               ))}
             </div>
