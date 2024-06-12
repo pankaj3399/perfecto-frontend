@@ -22,7 +22,7 @@ export default function Intro({latitude, longitude, properties}) {
     <div className="sm:h-[100vh] h-[65vh] w-[100%]">
       <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
         <Map
-          center={mapCenter}
+          defaultCenter={mapCenter} /// Default center of the map
           defaultZoom={10}
           mapId={GOOGLE_MAPS_MAP_ID}
         >
