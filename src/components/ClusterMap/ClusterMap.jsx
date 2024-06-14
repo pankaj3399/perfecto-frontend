@@ -1,124 +1,133 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  APIProvider,
-  Map,
-  useMap,
-  AdvancedMarker,
-} from "@vis.gl/react-google-maps";
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { IoHome } from "react-icons/io5";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-const GOOGLE_MAPS_MAP_ID = process.env.REACT_APP_GOOGLE_MAPS_MAP_ID
 
-export default function Intro({latitude, longitude, properties}) {
-  const [mapCenter, setMapCenter] = useState({ lat: parseFloat(latitude), lng: parseFloat(longitude) });
+const mapContainerStyle = {
+  width: "100%",
+  height: "100%",
+};
+
+const defaultOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+};
+
+export default function Intro({ latitude, longitude, properties }) {
+  const [mapCenter, setMapCenter] = useState({
+    lat: parseFloat(latitude) || 42.361145,
+    lng: parseFloat(longitude) || -71.057083,
+  });
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const mapRef = useRef(null);
+  const markerClustererRef = useRef(null);
+  const markersRef = useRef([]);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+  });
+
+  const handleCenterChanged = () => {
+    if (mapRef.current) {
+      const newCenter = mapRef.current.getCenter();
+      setMapCenter({
+        lat: newCenter.lat(),
+        lng: newCenter.lng(),
+      });
+    }
+  };
+
   useEffect(() => {
-    setMapCenter({ lat: parseFloat(latitude) || 42.361145, lng: parseFloat(longitude) || -71.057083});
+    if (latitude && longitude) {
+      setMapCenter({
+        lat: parseFloat(latitude),
+        lng: parseFloat(longitude),
+      });
+    }
   }, [latitude, longitude]);
 
-  return (
-    <div className="sm:h-[100vh] h-[65vh] w-[100%]">
-      <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-        <Map
-          defaultCenter={mapCenter} /// Default center of the map
-          defaultZoom={10}
-          mapId={GOOGLE_MAPS_MAP_ID}
-        >
-          <Markers points={properties} />
-        </Map>
-      </APIProvider>
-    </div>
-  );
-}
-
-const Markers = ({ points }) => {
-  const map = useMap();
-  const markersRef = useRef({});
-  const selectedMarkerIdRef = useRef(null);
-  const clusterer = useRef(null);
-  const history = useNavigate();
-
   useEffect(() => {
-    if (!map) return;
-    if (!clusterer.current) {
-      clusterer.current = new MarkerClusterer({ map });
+    if (isLoaded && mapRef.current) {
+      // Clear previous markers
+      if (markerClustererRef.current) {
+        markerClustererRef.current.clearMarkers();
+      }
+      
+      markersRef.current = properties.map((point) => {
+        const marker = new window.google.maps.Marker({
+          position: {
+            lat: parseFloat(point.latitude),
+            lng: parseFloat(point.longitude),
+          },
+          icon: {
+            url: IoHome,
+            scaledSize: new window.google.maps.Size(24, 24),
+            origin: new window.google.maps.Point(0, 0),
+            anchor: new window.google.maps.Point(12, 12),
+          },
+        });
+
+        marker.addListener("click", () => handleMarkerClick(point));
+        return marker;
+      });
+
+      markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
     }
-  }, [map]);
+  }, [isLoaded, properties]);
 
-  useEffect(() => {
-    clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markersRef.current));
-  }, [markersRef.current]);
+  const navigate = useNavigate();
 
-  const setMarkerRef = useCallback((marker, key) => {
-    if (marker && markersRef.current[key]) return;
-    if (!marker && !markersRef.current[key]) return;
-
-    if (marker) {
-      markersRef.current = {...markersRef.current, [key]:marker};
-    } else {  
-      const newMarkers = {...markersRef.current}
-      delete newMarkers[key];
-      markersRef.current = newMarkers
-
-    }
-
-    
-
-    setTimeout(()=>{
-      clusterer.current?.clearMarkers();
-      clusterer.current?.addMarkers(Object.values(markersRef.current));
-    },1)
-  }, []);
-
-  const handleMarkerClick = (id) => {
-    if (id === selectedMarkerIdRef.current) {
-      selectedMarkerIdRef.current = null;
-    } else {
-      selectedMarkerIdRef.current = id;
-    }
+  const handleMarkerClick = (property) => {
+    setSelectedProperty(property);
   };
 
   const handleNavigate = (propertyID) => {
-    history(`/property-details/${propertyID}`);
+    navigate(`/property-details/${propertyID}`);
   };
 
+  if (loadError) return "Error loading maps";
+  if (!isLoaded) return "Loading Maps";
+
   return (
-    <>
-      {points.map((point) => (
-        <React.Fragment key={point?._id}>
-          <AdvancedMarker
+    <div className="sm:h-[100vh] h-[65vh] w-[100%]">
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={mapCenter}
+        zoom={10}
+        options={defaultOptions}
+        onLoad={(map) => {
+          mapRef.current = map;
+        }}
+        onDragEnd={handleCenterChanged}
+      >
+        {selectedProperty && (
+          <InfoWindow
             position={{
-              lat: parseFloat(point?.latitude),
-              lng: parseFloat(point?.longitude),
+              lat: parseFloat(selectedProperty.latitude),
+              lng: parseFloat(selectedProperty.longitude),
             }}
-            ref={(marker) => setMarkerRef(marker, point?._id)}
-            onClick={() => handleMarkerClick(point?._id)}
+            onCloseClick={() => setSelectedProperty(null)}
           >
-            {selectedMarkerIdRef.current === parseFloat(point?._id) && (
-              <div className="">
-                <div
-                  className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold mt-4 flex flex-col items-start cursor-pointer"
-                  onClick={() => handleNavigate(point?._id)}
-                >
-                  <div>
-                    {point.price.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
-                  <div>{point?.name}</div>
-                </div>
+            <div
+              className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
+              onClick={() => handleNavigate(selectedProperty._id)}
+            >
+              <div>
+                {selectedProperty.price.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
               </div>
-            )}
-            <IoHome style={{ fontSize: "24px", color: "#800080" }} />
-          </AdvancedMarker>
-        </React.Fragment>
-      ))}
-    </>
+              <div>{selectedProperty.name}</div>
+            </div>
+          </InfoWindow>
+        )}
+      </GoogleMap>
+    </div>
   );
-};
+}
