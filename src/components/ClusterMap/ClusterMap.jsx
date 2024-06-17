@@ -16,12 +16,12 @@ const defaultOptions = {
   zoomControl: true,
 };
 
-export default function Intro({ latitude, longitude, properties }) {
+export default function Intro({ latitude, longitude, properties, onReceiveData }) {
   const [mapCenter, setMapCenter] = useState({
     lat: parseFloat(latitude) || 42.361145,
     lng: parseFloat(longitude) || -71.057083,
   });
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState([]);
   const mapRef = useRef(null);
   const markerClustererRef = useRef(null);
   const markersRef = useRef([]);
@@ -55,7 +55,7 @@ export default function Intro({ latitude, longitude, properties }) {
       if (markerClustererRef.current) {
         markerClustererRef.current.clearMarkers();
       }
-      
+
       markersRef.current = properties.map((point) => {
         const marker = new window.google.maps.Marker({
           position: {
@@ -70,18 +70,46 @@ export default function Intro({ latitude, longitude, properties }) {
           },
         });
 
-        marker.addListener("click", () => handleMarkerClick(point));
+        // marker.addListener("click", (e) => { console.log(e); handleMarkerClick(point) });
         return marker;
       });
 
       markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+
+      markerClustererRef.current.addListener('click', (event) => {
+        // const clickedLat = event._position.lat();
+        // const clickedLng = event._position.lng();
+        // console.log({ clickedLat, clickedLng });
+
+        let newClusterLatLng = [];
+        event.markers.forEach((marker) => {
+          const markerLat = marker.position.lat();
+          const markerLng = marker.position.lng();
+          newClusterLatLng.push({ markerLat, markerLng });
+        });
+
+        handleMarkerClick(newClusterLatLng);
+      });
     }
   }, [isLoaded, properties]);
 
   const navigate = useNavigate();
 
-  const handleMarkerClick = (property) => {
-    setSelectedProperty(property);
+  const passDataBack = (data) => {
+    onReceiveData(data); // Call the callback with the data
+  };
+
+  const handleMarkerClick = (newClusterLatLng) => {
+    let selectedProperties = [];
+    properties.forEach((property) => {
+      newClusterLatLng.forEach((cluster) => {
+        if (parseFloat(property.latitude) === cluster.markerLat && parseFloat(property.longitude) === cluster.markerLng) {
+          selectedProperties.push(property);
+        }
+      });
+    });
+    setSelectedProperty(selectedProperties);
+    passDataBack(selectedProperties);
   };
 
   const handleNavigate = (propertyID) => {
@@ -101,32 +129,35 @@ export default function Intro({ latitude, longitude, properties }) {
         onLoad={(map) => {
           mapRef.current = map;
         }}
-        onDragEnd={handleCenterChanged}
+        onDragEnd={() => handleCenterChanged}
       >
-        {selectedProperty && (
-          <InfoWindow
-            position={{
-              lat: parseFloat(selectedProperty.latitude),
-              lng: parseFloat(selectedProperty.longitude),
-            }}
-            onCloseClick={() => setSelectedProperty(null)}
-          >
-            <div
-              className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
-              onClick={() => handleNavigate(selectedProperty._id)}
+        {
+          selectedProperty.map((property) => (
+            <InfoWindow
+              position={{
+                lat: parseFloat(property.latitude),
+                lng: parseFloat(property.longitude),
+              }}
+              // onCloseClick={() => { setSelectedProperty() }}
+              key={property._id}
             >
-              <div>
-                {selectedProperty.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })}
+              <div
+                className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
+                onClick={() => { handleNavigate(selectedProperty._id) }}
+              >
+                <div>
+                  {property.price.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })}
+                </div>
+                <div>{property.name}</div>
               </div>
-              <div>{selectedProperty.name}</div>
-            </div>
-          </InfoWindow>
-        )}
+            </InfoWindow>
+          ))
+        }
       </GoogleMap>
     </div>
   );

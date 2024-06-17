@@ -16,6 +16,7 @@ const BuyPage = () => {
   const [minPrice, setMinPrice] = useState();
   const [lng, setLng] = useState(-71.057083);
   const [lat, setLat] = useState(42.361145);
+  const [dataFromMarker, setDataFromMarker] = useState(properties);
 
   const navigate = useNavigate();
 
@@ -84,8 +85,8 @@ const BuyPage = () => {
       const statusQueryString =
         statuses && statuses.length > 0
           ? statuses
-              .map((status) => `status=${encodeURIComponent(status)}`)
-              .join("&")
+            .map((status) => `status=${encodeURIComponent(status)}`)
+            .join("&")
           : "";
 
       const finalQueryString = [queryString, statusQueryString]
@@ -122,6 +123,10 @@ const BuyPage = () => {
   );
 
   useEffect(() => {
+    setDataFromMarker(properties);
+  }, [properties])
+
+  useEffect(() => {
     handleSubmitClick();
   }, [handleSubmitClick]);
 
@@ -131,6 +136,9 @@ const BuyPage = () => {
     }
   }, [minPrice, maxPrice, handleSubmitClick]);
 
+  const handleDataFromMap = (data) => {
+    setDataFromMarker(data);
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -146,7 +154,7 @@ const BuyPage = () => {
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 sm:px-[90px] px-[24px] my-[32px] gap-[24px] sm:h-auto">
         <div>
-          <ClusterMap latitude={lat} longitude={lng} properties={properties} />{" "}
+          <ClusterMap latitude={lat} longitude={lng} properties={properties} onReceiveData={handleDataFromMap} />{" "}
         </div>
         <div>
           <div className="py-2">
@@ -161,7 +169,7 @@ const BuyPage = () => {
           </div>
           <div className="flex-1 overflow-y-auto h-[calc(100vh-150px)]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sticky overflow-y-auto">
-              {properties?.map((property, index) => (
+              {dataFromMarker?.map((property, index) => (
                 <div
                   onClick={() => goToPropertyDetails(property._id)}
                   key={index}
