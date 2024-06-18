@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { IoHome } from "react-icons/io5";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -16,12 +15,12 @@ const defaultOptions = {
   zoomControl: true,
 };
 
-export default function Intro({ latitude, longitude, properties, onReceiveData }) {
+export default function ClusterMap({ latitude, longitude, properties, onBoundsChanged }) {
   const [mapCenter, setMapCenter] = useState({
     lat: parseFloat(latitude) || 42.361145,
     lng: parseFloat(longitude) || -71.057083,
   });
-  const [selectedProperty, setSelectedProperty] = useState([]);
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const mapRef = useRef(null);
   const markerClustererRef = useRef(null);
   const markersRef = useRef([]);
@@ -55,65 +54,47 @@ export default function Intro({ latitude, longitude, properties, onReceiveData }
       if (markerClustererRef.current) {
         markerClustererRef.current.clearMarkers();
       }
-
+      
       markersRef.current = properties.map((point) => {
         const marker = new window.google.maps.Marker({
           position: {
             lat: parseFloat(point.latitude),
             lng: parseFloat(point.longitude),
-          },
-          icon: {
-            url: IoHome,
-            scaledSize: new window.google.maps.Size(24, 24),
-            origin: new window.google.maps.Point(0, 0),
-            anchor: new window.google.maps.Point(12, 12),
-          },
+          }
         });
 
-        // marker.addListener("click", (e) => { console.log(e); handleMarkerClick(point) });
+        marker.addListener("click", () => handleMarkerClick(point));
         return marker;
       });
 
       markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
-
-      markerClustererRef.current.addListener('click', (event) => {
-        // const clickedLat = event._position.lat();
-        // const clickedLng = event._position.lng();
-        // console.log({ clickedLat, clickedLng });
-
-        let newClusterLatLng = [];
-        event.markers.forEach((marker) => {
-          const markerLat = marker.position.lat();
-          const markerLng = marker.position.lng();
-          newClusterLatLng.push({ markerLat, markerLng });
-        });
-
-        handleMarkerClick(newClusterLatLng);
-      });
     }
   }, [isLoaded, properties]);
 
   const navigate = useNavigate();
 
-  const passDataBack = (data) => {
-    onReceiveData(data); // Call the callback with the data
-  };
-
-  const handleMarkerClick = (newClusterLatLng) => {
-    let selectedProperties = [];
-    properties.forEach((property) => {
-      newClusterLatLng.forEach((cluster) => {
-        if (parseFloat(property.latitude) === cluster.markerLat && parseFloat(property.longitude) === cluster.markerLng) {
-          selectedProperties.push(property);
-        }
-      });
-    });
-    setSelectedProperty(selectedProperties);
-    passDataBack(selectedProperties);
+  const handleMarkerClick = (property) => {
+    setSelectedProperty(property);
   };
 
   const handleNavigate = (propertyID) => {
     navigate(`/property-details/${propertyID}`);
+  };
+
+  const handleBoundsChanged = () => {
+    if (mapRef.current) {
+      const bounds = mapRef.current.getBounds();
+      if (bounds && onBoundsChanged) {
+        const ne = bounds.getNorthEast();
+        const sw = bounds.getSouthWest();
+        onBoundsChanged({
+          minLat: sw.lat(),
+          maxLat: ne.lat(),
+          minLng: sw.lng(),
+          maxLng: ne.lng(),
+        });
+      }
+    }
   };
 
   if (loadError) return "Error loading maps";
@@ -129,35 +110,34 @@ export default function Intro({ latitude, longitude, properties, onReceiveData }
         onLoad={(map) => {
           mapRef.current = map;
         }}
-        onDragEnd={() => handleCenterChanged}
+        onDragEnd={handleCenterChanged}
+        onZoomChanged={handleBoundsChanged}
+        onBoundsChanged={handleBoundsChanged}
       >
-        {
-          selectedProperty.map((property) => (
-            <InfoWindow
-              position={{
-                lat: parseFloat(property.latitude),
-                lng: parseFloat(property.longitude),
-              }}
-              // onCloseClick={() => { setSelectedProperty() }}
-              key={property._id}
+        {selectedProperty && (
+          <InfoWindow
+            position={{
+              lat: parseFloat(selectedProperty.latitude),
+              lng: parseFloat(selectedProperty.longitude),
+            }}
+            onCloseClick={() => setSelectedProperty(null)}
+          >
+            <div
+              className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
+              onClick={() => handleNavigate(selectedProperty._id)}
             >
-              <div
-                className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
-                onClick={() => { handleNavigate(selectedProperty._id) }}
-              >
-                <div>
-                  {property.price.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}
-                </div>
-                <div>{property.name}</div>
+              <div>
+                {selectedProperty.price.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}
               </div>
-            </InfoWindow>
-          ))
-        }
+              <div>{selectedProperty.name}</div>
+            </div>
+          </InfoWindow>
+        )}
       </GoogleMap>
     </div>
   );

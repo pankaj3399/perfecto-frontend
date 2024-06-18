@@ -11,23 +11,25 @@ const BuyPage = () => {
   const location = useLocation();
   const property = location.state;
   const [properties, setProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [search, setSearch] = useState(property?.city);
   const [maxPrice, setMaxPrice] = useState();
   const [minPrice, setMinPrice] = useState();
   const [lng, setLng] = useState(-71.057083);
   const [lat, setLat] = useState(42.361145);
-  const [dataFromMarker, setDataFromMarker] = useState(properties);
 
   const navigate = useNavigate();
 
   const goToPropertyDetails = (_id) => {
     navigate(`/property-details/${_id}`);
   };
+
   const handlePlaceSelect = (data) => {
     setLat(data.lat);
     setLng(data.lng);
-    // handleSubmitClick()
+    handleSubmitClick(); // Fetch properties based on new location
   };
+
   const handleSubmitClick = useCallback(
     async (
       minPrice,
@@ -85,8 +87,8 @@ const BuyPage = () => {
       const statusQueryString =
         statuses && statuses.length > 0
           ? statuses
-            .map((status) => `status=${encodeURIComponent(status)}`)
-            .join("&")
+              .map((status) => `status=${encodeURIComponent(status)}`)
+              .join("&")
           : "";
 
       const finalQueryString = [queryString, statusQueryString]
@@ -123,10 +125,6 @@ const BuyPage = () => {
   );
 
   useEffect(() => {
-    setDataFromMarker(properties);
-  }, [properties])
-
-  useEffect(() => {
     handleSubmitClick();
   }, [handleSubmitClick]);
 
@@ -136,8 +134,31 @@ const BuyPage = () => {
     }
   }, [minPrice, maxPrice, handleSubmitClick]);
 
-  const handleDataFromMap = (data) => {
-    setDataFromMarker(data);
+  const handleBoundsChanged = async (bounds) => {
+    const params = {
+      minLat: bounds.minLat,
+      maxLat: bounds.maxLat,
+      minLng: bounds.minLng,
+      maxLng: bounds.maxLng,
+    };
+
+    if (minPrice !== undefined) params.minPrice = minPrice;
+    if (maxPrice !== undefined) params.maxPrice = maxPrice;
+
+    const queryString = Object.keys(params)
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .join("&");
+
+    console.log("Fetching properties with params: ", params);
+
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/search?${queryString}`);
+      const data = response.data;
+      console.log("Filtered properties: ", data); // Added console.log statement
+      setFilteredProperties(data);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
   };
 
   return (
@@ -154,7 +175,12 @@ const BuyPage = () => {
       </div>
       <div className="grid sm:grid-cols-2 grid-cols-1 sm:px-[90px] px-[24px] my-[32px] gap-[24px] sm:h-auto">
         <div>
-          <ClusterMap latitude={lat} longitude={lng} properties={properties} onReceiveData={handleDataFromMap} />{" "}
+          <ClusterMap
+            latitude={lat}
+            longitude={lng}
+            properties={filteredProperties}
+            onBoundsChanged={handleBoundsChanged}
+          />
         </div>
         <div>
           <div className="py-2">
@@ -169,7 +195,7 @@ const BuyPage = () => {
           </div>
           <div className="flex-1 overflow-y-auto h-[calc(100vh-150px)]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sticky overflow-y-auto">
-              {dataFromMarker?.map((property, index) => (
+              {filteredProperties?.map((property, index) => (
                 <div
                   onClick={() => goToPropertyDetails(property._id)}
                   key={index}
