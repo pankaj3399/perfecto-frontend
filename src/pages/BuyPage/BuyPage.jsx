@@ -27,7 +27,7 @@ const BuyPage = () => {
   const handlePlaceSelect = (data) => {
     setLat(data.lat);
     setLng(data.lng);
-    handleSubmitClick(); // Fetch properties based on new location
+    handleSubmitClick();
   };
 
   const handleSubmitClick = useCallback(
@@ -154,7 +154,7 @@ const BuyPage = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/search?${queryString}`);
       const data = response.data;
-      console.log("Filtered properties: ", data); // Added console.log statement
+      console.log("Filtered properties: ", data);
       setFilteredProperties(data);
     } catch (error) {
       console.error("Error fetching properties:", error);

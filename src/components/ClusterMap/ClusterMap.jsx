@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, InfoWindow } from "@react-google-maps/api";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { debounce } from "lodash";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
@@ -24,6 +25,7 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
   const mapRef = useRef(null);
   const markerClustererRef = useRef(null);
   const markersRef = useRef([]);
+  const prevPropertiesRef = useRef([]);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -48,14 +50,14 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
     }
   }, [latitude, longitude]);
 
-  useEffect(() => {
-    if (isLoaded && mapRef.current) {
+  const updateMarkers = () => {
+    if (mapRef.current && isLoaded) {
       // Clear previous markers
-      if (markerClustererRef.current) {
-        markerClustererRef.current.clearMarkers();
-      }
-      
-      markersRef.current = properties.map((point) => {
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+
+      // Create new markers
+      const newMarkers = properties.map(point => {
         const marker = new window.google.maps.Marker({
           position: {
             lat: parseFloat(point.latitude),
@@ -67,7 +69,21 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
         return marker;
       });
 
-      markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+      markersRef.current = newMarkers;
+
+      if (markerClustererRef.current) {
+        markerClustererRef.current.clearMarkers();
+        markerClustererRef.current.addMarkers(markersRef.current);
+      } else {
+        markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (JSON.stringify(prevPropertiesRef.current) !== JSON.stringify(properties)) {
+      updateMarkers();
+      prevPropertiesRef.current = properties; // Update the cached properties
     }
   }, [isLoaded, properties]);
 
@@ -81,7 +97,8 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
     navigate(`/property-details/${propertyID}`);
   };
 
-  const handleBoundsChanged = () => {
+  // Debounced version of handleBoundsChanged
+  const debouncedHandleBoundsChanged = useCallback(debounce(() => {
     if (mapRef.current) {
       const bounds = mapRef.current.getBounds();
       if (bounds && onBoundsChanged) {
@@ -95,7 +112,7 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
         });
       }
     }
-  };
+  }, 300), [onBoundsChanged]);
 
   if (loadError) return "Error loading maps";
   if (!isLoaded) return "Loading Maps";
@@ -111,8 +128,8 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
           mapRef.current = map;
         }}
         onDragEnd={handleCenterChanged}
-        onZoomChanged={handleBoundsChanged}
-        onBoundsChanged={handleBoundsChanged}
+        onZoomChanged={debouncedHandleBoundsChanged}
+        onBoundsChanged={debouncedHandleBoundsChanged}
       >
         {selectedProperty && (
           <InfoWindow

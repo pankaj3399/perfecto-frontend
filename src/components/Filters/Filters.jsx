@@ -79,11 +79,11 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
       <div className="flex gap-4 items-center p-4 bg-gray-100 rounded-md shadow-sm">
         <Select
           options={[
-            { value: 1000000, label: "$1000k" },
-            { value: 2000000, label: "$2000k" },
-            { value: 3000000, label: "$3000k"},
-            { value: 4000000, label: "$4000k"},
-            { value: 5000000, label: "$5000k"}
+            { value: 1000000, label: "$10000k" },
+            { value: 2000000, label: "$20000k" },
+            { value: 3000000, label: "$30000k"},
+            { value: 4000000, label: "$40000k"},
+            { value: 5000000, label: "$50000k"}
           ]}
           name="minPrice"
           placeholder="$ No Min"
@@ -94,11 +94,11 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
         <span className="text-gray-500">-</span>
         <Select
           options={[
-            { value: 1000000, label: "$1000k" },
-            { value: 2000000, label: "$2000k" },
-            { value: 3000000, label: "$3000k"},
-            { value: 4000000, label: "$4000k"},
-            { value: 5000000, label: "$5000k"}
+            { value: 1000000, label: "$10000k" },
+            { value: 2000000, label: "$20000k" },
+            { value: 3000000, label: "$30000k"},
+            { value: 4000000, label: "$40000k"},
+            { value: 5000000, label: "$50000k"}
           ]}
           name="maxPrice"
           placeholder="$ No Max"
