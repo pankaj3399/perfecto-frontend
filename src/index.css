@@ -13,6 +13,7 @@
   height: 50vh;
 }
 
+
 @media (min-width: 640px) {
   .hero-bg {
     height: 60vh;

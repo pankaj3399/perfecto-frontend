@@ -8,7 +8,7 @@ const Button = ({ className, placeholder, variant, onClick, children }) => {
       : 'bg-[#800080] text-white hover:bg-[#9b59b6]';
   
     return (
-      <button onClick={onClick} className={`${baseClasses} ${variantClasses} ${className}`}>
+      <button type='submit' onClick={onClick} className={`${baseClasses} ${variantClasses} ${className}`}>
         {placeholder}
         {children}
       </button>

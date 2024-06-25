@@ -3,15 +3,22 @@ import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import useSearch from "../../components/UseSearch/useSearch";
 
-const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProperties }) => {
+const Navbar = ({
+  searchedValue,
+  setSearch,
+  onPlaceSelect,
+  properties,
+  setProperties,
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === `/`;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isValueChanging, setIsValueChanging] = useState(false)
+  const [isValueChanging, setIsValueChanging] = useState(false);
 
-  const { value, setValue, places, buildings, isLoading, updatedProperties } = useSearch({searchedValue, properties});
-  
+  const { value, setValue, places, buildings, isLoading, updatedProperties } =
+    useSearch({ searchedValue, properties });
+
   // useEffect(()=>{
   //   if(setSearch)setSearch(value)
   // },[value])
@@ -24,10 +31,10 @@ const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProper
     navigate(`/buy`, {
       state: data,
     });
-    if(setSearch)setSearch(value)
-    setProperties(updatedProperties)
+    if (setSearch) setSearch(value);
+    setProperties(updatedProperties);
     onPlaceSelect(data);
-    setIsValueChanging(false)
+    setIsValueChanging(false);
   };
 
   const goToPropertyDetails = (propertyId) => {
@@ -35,16 +42,16 @@ const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProper
   };
 
   const onSearch = (data) => {
-    setIsValueChanging(false)
-    if(setSearch)setSearch(value)
+    setIsValueChanging(false);
+    if (setSearch) setSearch(value);
     onPlaceSelect(data);
   };
 
-  const handleSearchInputChange = (e) =>{
-    e.preventDefault()
-    setValue(e.target.value)
-    setIsValueChanging(true)
-  }
+  const handleSearchInputChange = (e) => {
+    e.preventDefault();
+    setValue(e.target.value);
+    setIsValueChanging(true);
+  };
 
   return (
     <nav
@@ -130,6 +137,7 @@ const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProper
           )}
         </div>
       </div>
+
       <div className="hidden md:flex space-x-8">
         <a
           className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
@@ -138,6 +146,24 @@ const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProper
           onClick={() => navigate("/buy")}
         >
           Buy
+        </a>
+        <a
+          target="_blank"
+          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+            isHome ? "text-white hover:bg-[white] p-2" : "text-black"
+          }`}
+          href="https://arcmortgage.floify.com/r/perfecto-homes"
+        >
+          Perfecto Lending Partner
+        </a>
+        <a
+          target="_blank"
+          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+            isHome ? "text-white hover:bg-[white] p-2" : "text-black"
+          }`}
+          href="https://www.azibo.com/rent-payments"
+        >
+          Existing Buyers
         </a>
       </div>
       <div className="md:hidden flex items-center mt-[10px]">
@@ -175,6 +201,20 @@ const Navbar = ({ searchedValue, setSearch, onPlaceSelect, properties, setProper
             onClick={() => navigate("/buy")}
           >
             Buy
+          </a>
+          <a
+            target="_blank"
+            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            href="https://arcmortgage.floify.com/r/perfecto-homes"
+          >
+            Perfecto Lending Partner
+          </a>
+          <a
+            target="_blank"
+            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            href="https://www.azibo.com/rent-payments"
+          >
+            Existing Buyers
           </a>
         </div>
       </div>
