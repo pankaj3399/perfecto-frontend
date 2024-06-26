@@ -106,6 +106,12 @@ const BuyPage = () => {
           }
           return prevProperties;
         });
+        setFilteredProperties((prevProperties) => {
+          if (JSON.stringify(prevProperties) !== JSON.stringify(data)) {
+            return data;
+          }
+          return prevProperties;
+        })
         if (search && search.length > 0) {
           const suggestedCities = cities.data?.filter((city) => {
             const regex = new RegExp(search, "i");

@@ -154,7 +154,7 @@ const Navbar = ({
           }`}
           href="https://arcmortgage.floify.com/r/perfecto-homes"
         >
-          Perfecto Lending Partner
+          Perfecto Buyer Apply
         </a>
         <a
           target="_blank"
@@ -163,7 +163,7 @@ const Navbar = ({
           }`}
           href="https://www.azibo.com/rent-payments"
         >
-          Existing Buyers
+          Existing Owner Payment
         </a>
       </div>
       <div className="md:hidden flex items-center mt-[10px]">
@@ -207,14 +207,14 @@ const Navbar = ({
             className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
             href="https://arcmortgage.floify.com/r/perfecto-homes"
           >
-            Perfecto Lending Partner
+           Perfecto Buyer Apply
           </a>
           <a
             target="_blank"
             className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
             href="https://www.azibo.com/rent-payments"
           >
-            Existing Buyers
+            Existing Owner Payment
           </a>
         </div>
       </div>

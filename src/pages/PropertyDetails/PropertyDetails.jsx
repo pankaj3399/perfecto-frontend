@@ -259,23 +259,25 @@ const PropertyDetails = () => {
               </div>
             </div>
           </div>
-          <div className="mt-[42px] sm:px-0 px-[24px]">
-            <h3 className="font-semibold text-[24px]">Amenities</h3>
-            <div className="grid grid-cols-3 gap-[40px] mt-4">
-              {Object.entries(amenities).map(([title, value], index) => (
-                <React.Fragment key={`${title}-${index}`}>
-                  <div className="sm:py-2 py-1 border-b col-span-1 sm:text-[16px] text-[14px]">
-                    {transformKeyForDisplay(title)}
-                  </div>
-                  <div className="sm:py-2 py-1 border-b col-span-1 sm:text-[16px] text-[14px]">
-                    {value}
-                  </div>
-                  <div></div>
-                </React.Fragment>
-              ))}
+          {amenities && Object.keys(amenities).length > 0 && (
+            <div className="mt-[42px] sm:px-0 px-[24px]">
+              <h3 className="font-semibold text-[24px]">Amenities</h3>
+              <div className="grid grid-cols-3 gap-[40px] mt-4">
+                {Object.entries(amenities).map(([title, value], index) => (
+                  <React.Fragment key={`${title}-${index}`}>
+                    <div className="sm:py-2 py-1 border-b col-span-1 sm:text-[16px] text-[14px]">
+                      {transformKeyForDisplay(title)}
+                    </div>
+                    <div className="sm:py-2 py-1 border-b col-span-1 sm:text-[16px] text-[14px]">
+                      {value}
+                    </div>
+                    <div></div>
+                  </React.Fragment>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="mt-[42px] sm:px-0 px-[24px] sm:w-[890px]">
+          )}
+          <div className="mt-[42px] sm:px-0 px-[24px] sm:w-[820px] block">
             <h3 className="font-semibold text-[24px]">Location</h3>
             <GoogleMaps
               locations={[
@@ -381,14 +383,17 @@ const PropertyDetails = () => {
                 </h3>
                 <p>
                   {renderList(
-                    propertyInformation.summary.locationAndGeneralInformation
+                    propertyInformation?.summary
+                      ?.locationAndGeneralInformation || {}
                   )}
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold">School Information</h3>
                 <p>
-                  {renderList(propertyInformation.summary.schoolInformation)}
+                  {renderList(
+                    propertyInformation?.summary?.schoolInformation || {}
+                  )}
                 </p>
               </div>
             </div>
@@ -397,14 +402,14 @@ const PropertyDetails = () => {
             <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4">
               <div>
                 <h3 className="font-semibold">Parking</h3>
-                <p>{renderList(propertyInformation.summary.parking)}</p>
+                <p>{renderList(propertyInformation?.summary?.parking || {})}</p>
               </div>
               <div>
                 <h3 className="font-semibold">Taxes and HOA Information</h3>
                 <p>
                   {" "}
                   {renderList(
-                    propertyInformation.summary.taxesAndHOAInformation
+                    propertyInformation?.summary?.taxesAndHOAInformation || {}
                   )}
                 </p>
               </div>
@@ -422,13 +427,16 @@ const PropertyDetails = () => {
               <div>
                 <h3 className="font-semibold">Lot Information</h3>
                 <p>
-                  {renderList(propertyInformation.propertyInfo.lotInformation)}
+                  {renderList(
+                    propertyInformation?.propertyInfo?.lotInformation || {}
+                  )}
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold">Property and Assessments</h3>
                 {renderList(
-                  propertyInformation.propertyInfo.propertyAndAssessments
+                  propertyInformation?.propertyInfo?.propertyAndAssessments ||
+                    {}
                 )}
               </div>
             </div>
@@ -448,8 +456,8 @@ const PropertyDetails = () => {
                 </h3>
                 <p>
                   {renderList(
-                    propertyInformation.interiorAndExteriorFeatures
-                      .exteriorFeatures
+                    propertyInformation?.interiorAndExteriorFeatures
+                      ?.exteriorFeatures || {}
                   )}
                 </p>
               </div>
@@ -459,8 +467,8 @@ const PropertyDetails = () => {
                 </h3>
                 <p>
                   {renderList(
-                    propertyInformation.interiorAndExteriorFeatures
-                      .interiorFeatures
+                    propertyInformation?.interiorAndExteriorFeatures
+                      ?.interiorFeatures || {}
                   )}
                 </p>
               </div>
@@ -517,7 +525,7 @@ const PropertyDetails = () => {
           <div>
             <h3 className="font-semibold"> Tax Record</h3>
             <div className="py-2">
-              {publicRecords.taxes.map((taxRecord, index) => (
+              {publicRecords?.taxes?.map((taxRecord, index) => (
                 <div key={index}>
                   {Object.entries(taxRecord).map(([year, amount]) => (
                     <div key={year}>
