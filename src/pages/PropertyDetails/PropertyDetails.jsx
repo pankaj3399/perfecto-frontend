@@ -369,113 +369,34 @@ const PropertyDetails = () => {
         <h2 className="text-[24px] font-semibold mb-2">
           Property Information for {name}
         </h2>
-        <div className="mt-4 border">
-          <div className="bg-[#f4f4f4] py-4 sm:px-6 px-4">
-            <h3 className="sm:text-[16px] text-[14px] font-semibold">
-              Summary
-            </h3>
-          </div>
-          <div className="py-4 px-6 sm:text-[16px] text-[14px]">
-            <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4">
-              <div>
-                <h3 className="font-semibold">
-                  Location and General Information
-                </h3>
-                <p>
-                  {renderList(
-                    propertyInformation?.summary
-                      ?.locationAndGeneralInformation || {}
-                  )}
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold">School Information</h3>
-                <p>
-                  {renderList(
-                    propertyInformation?.summary?.schoolInformation || {}
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="px-6 pb-4 sm:text-[16px] text-[14px]">
-            <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4">
-              <div>
-                <h3 className="font-semibold">Parking</h3>
-                <p>{renderList(propertyInformation?.summary?.parking || {})}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Taxes and HOA Information</h3>
-                <p>
-                  {" "}
-                  {renderList(
-                    propertyInformation?.summary?.taxesAndHOAInformation || {}
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border">
-          <div className="bg-[#f4f4f4] py-4 sm:px-6 px-4">
-            <h3 className="sm:text-[16px] text-[14px] font-semibold">
-              Property
-            </h3>
-          </div>
-          <div className="px-6 sm:text-[16px] text-[14px]">
-            <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4 py-4">
-              <div>
-                <h3 className="font-semibold">Lot Information</h3>
-                <p>
-                  {renderList(
-                    propertyInformation?.propertyInfo?.lotInformation || {}
-                  )}
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Property and Assessments</h3>
-                {renderList(
-                  propertyInformation?.propertyInfo?.propertyAndAssessments ||
-                    {}
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="border">
-          <div className="bg-[#f4f4f4] py-4 sm:px-6 px-4">
-            <h3 className="text-[16px] font-semibold">
-              Interior and Exterior Features
-            </h3>
-          </div>
-          <div className="sm:px-6 px-4 pb-4">
-            <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4 sm:text-[16px] text-[14px]">
-              <div>
+        {Object.entries(propertyInformation).map(
+          ([sectionKey, sectionValue]) => (
+            <div key={sectionKey} className="mt-4 border">
+              <div className="bg-[#f4f4f4] py-4 sm:px-6 px-4">
                 <h3 className="sm:text-[16px] text-[14px] font-semibold">
-                  Exterior Features
+                  {transformKeyForDisplay(sectionKey)}
                 </h3>
-                <p>
-                  {renderList(
-                    propertyInformation?.interiorAndExteriorFeatures
-                      ?.exteriorFeatures || {}
-                  )}
-                </p>
               </div>
-              <div>
-                <h3 className="sm:text-[16px] text-[14px] font-semibold">
-                  Interior Features
-                </h3>
-                <p>
-                  {renderList(
-                    propertyInformation?.interiorAndExteriorFeatures
-                      ?.interiorFeatures || {}
-                  )}
-                </p>
+              <div className="px-6 sm:text-[16px] text-[14px]">
+                {Object.entries(sectionValue).map(([subKey, subValue]) => (
+                  <div
+                    key={subKey}
+                    className="grid sm:grid-cols-2 grid-cols-1 sm:gap-0 gap-4 py-4"
+                  >
+                    <div>
+                      <h3 className="font-semibold">
+                        {transformKeyForDisplay(subKey)}
+                      </h3>
+                      <p>{renderList(subValue)}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-        </div>
+          )
+        )}
       </div>
+
       <div className="sm:px-[150px] px-[24px]">
         <h2 className="text-[24px] font-semibold mb-2">
           Property History for {name}
