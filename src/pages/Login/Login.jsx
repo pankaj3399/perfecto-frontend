@@ -1,6 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../components/Button/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const {
@@ -9,8 +12,27 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("username", data.email);
+    formData.append("password", data.password);
+    formData.append("scope", data.role)
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/token`, formData);
+      if (response.status === 200) {
+        document.cookie = `access_token=${response.data.access_token}`;
+        document.cookie = `token_type=${response.data.token_type}`;
+        navigate("/");
+        toast.success("Login successful");
+      }
+    } catch (error) {
+      console.log(error);
+      console.log(error.response?.data?.detail || "Something went wrong, try again");
+      toast.error(error.response?.data?.detail || "Something went wrong, try again");
+    }
   };
 
   const imageUrl = "https://via.placeholder.com/150";

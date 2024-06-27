@@ -1,18 +1,39 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../components/Button/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    // Add your sign-up logic here
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    const payload = {
+      full_name: `${data.firstName} ${data?.lastName}`,
+      email: data.email,
+      password: data.password,
+      role: data.role,
+    }
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/signup`,
+        payload
+      );
+      if (response.status === 200) {
+        navigate("/login");
+        toast.success("User registered successfully, Please login to continue");
+      }
+    } catch (error) {
+      console.log(error.response.data.detail || "Something went wrong, try again");
+      toast.error(error.response.data.detail || "Something went wrong, try again");
+    }
   };
 
   return (

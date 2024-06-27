@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useSearch from "../../components/UseSearch/useSearch";
+import { useSelector, useDispatch } from "react-redux";
+import Button from "../Button/Button";
+import { setUser } from "../../feature/user/userSlice";
+import axios from "axios";
+import AddressModal from "../Modal/AddressModal";
 
 const Navbar = ({
   searchedValue,
@@ -16,8 +21,33 @@ const Navbar = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isValueChanging, setIsValueChanging] = useState(false);
 
-  const { value, setValue, places, buildings, isLoading, updatedProperties } =
-    useSearch({ searchedValue, properties });
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+
+  const { value, setValue, places, buildings, isLoading, updatedProperties } = useSearch({ searchedValue, properties });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  /**
+ * This function is used to get the cookie value by name
+ * @param {string} name - cookie name
+ */
+  function getCookie(name) {
+    let cookieArr = document.cookie.split(";");
+
+    for (let i = 0; i < cookieArr.length; i++) {
+      let cookiePair = cookieArr[i].split("=");
+
+      if (name === cookiePair[0].trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
+    }
+
+    return null;
+  }
 
   // useEffect(()=>{
   //   if(setSearch)setSearch(value)
@@ -53,11 +83,42 @@ const Navbar = ({
     setIsValueChanging(true);
   };
 
+  const handleLogout = () => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [key] = cookie.trim().split('=');
+      document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+    dispatch(setUser({ email: '', full_name: '', role: '' }));
+  }
+
+  useEffect(() => {
+    const access_token = getCookie("access_token");
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            }
+          }
+        );
+        if (response.status === 200) {
+          console.log(response.data);
+          dispatch(setUser(response.data));
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    }
+    fetchUserDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <nav
-      className={`bg-transparent p-4 flex justify-between items-center ${
-        isHome ? "text-black" : "text-white"
-      }`}
+      className={`bg-transparent p-4 flex justify-between items-center ${isHome ? "text-black" : "text-white"
+        }`}
     >
       <div className="flex items-center space-x-4">
         <div className="cursor-pointer">
@@ -140,32 +201,49 @@ const Navbar = ({
 
       <div className="hidden md:flex space-x-8">
         <a
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black"
-          }`}
+          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+            }`}
           onClick={() => navigate("/buy")}
         >
           Buy
         </a>
         <a
           target="_blank"
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black"
-          }`}
+          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+            }`}
           href="https://arcmortgage.floify.com/r/perfecto-homes"
         >
           Perfecto Buyer Apply
         </a>
         <a
           target="_blank"
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black"
-          }`}
+          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+            }`}
           href="https://www.azibo.com/rent-payments"
         >
           Existing Owner Payment
         </a>
+        {
+          user?.full_name &&
+          <div className="space-x-8 flex">
+            <span className={`text-[16px] font-semibold ${isHome ? "text-white p-2" : "text-black my-auto"}`}>Welcome, {user?.full_name.split(" ")[0]}</span>
+            <Button
+              className="p-2 h-10"
+              children="Logout"
+              onClick={handleLogout}
+            />
+          </div>
+        }
+        {
+          user?.role === "agent" &&
+          <Button
+            className="p-2 h-10"
+            children="Submit Address"
+            onClick={openModal}
+          />
+        }
       </div>
+      <AddressModal isOpen={isModalOpen} closeModal={closeModal} />
       <div className="md:hidden flex items-center mt-[10px]">
         <button
           onClick={toggleMobileMenu}
@@ -175,9 +253,8 @@ const Navbar = ({
         </button>
       </div>
       <div
-        className={`fixed top-0 left-0 w-3/4 h-full bg-white text-black z-50 transition-transform transform ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 w-3/4 h-full bg-white text-black z-50 transition-transform transform ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="p-4 flex justify-between items-center">
           <div className="cursor-pointer">
@@ -196,6 +273,12 @@ const Navbar = ({
           </button>
         </div>
         <div className="flex flex-col space-y-4 p-4">
+          {/* <div>
+            <p>Welcome, {user?.full_name}</p>
+          </div> */}{
+            user?.full_name &&
+            <span className={`text-[16px] font-semibold text-black my-auto`}>Welcome, {user?.full_name.split(" ")[0]}</span>
+          }
           <a
             className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
             onClick={() => navigate("/buy")}
@@ -207,7 +290,7 @@ const Navbar = ({
             className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
             href="https://arcmortgage.floify.com/r/perfecto-homes"
           >
-           Perfecto Buyer Apply
+            Perfecto Buyer Apply
           </a>
           <a
             target="_blank"
@@ -216,6 +299,11 @@ const Navbar = ({
           >
             Existing Owner Payment
           </a>
+          <Button
+            className="p-2"
+            children="Logout"
+            onClick={handleLogout}
+          />
         </div>
       </div>
     </nav>
