@@ -7,6 +7,7 @@ import Button from "../Button/Button";
 import { setUser } from "../../feature/user/userSlice";
 import axios from "axios";
 import AddressModal from "../Modal/AddressModal";
+import { set } from "lodash";
 
 const Navbar = ({
   searchedValue,
@@ -28,8 +29,14 @@ const Navbar = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+    setIsMobileMenuOpen(false);
+  }
+  const closeModal = () => {
+    setIsModalOpen(false);
+  }
+
 
   /**
  * This function is used to get the cookie value by name
@@ -199,7 +206,7 @@ const Navbar = ({
         </div>
       </div>
 
-      <div className="hidden md:flex space-x-8">
+      <div className="hidden md:flex space-x-4">
         <a
           className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
             }`}
@@ -224,20 +231,39 @@ const Navbar = ({
           Existing Owner Payment
         </a>
         {
-          user?.full_name &&
-          <div className="space-x-8 flex">
-            <span className={`text-[16px] font-semibold ${isHome ? "text-white p-2" : "text-black my-auto"}`}>Welcome, {user?.full_name.split(" ")[0]}</span>
-            <Button
-              className="p-2 h-10"
-              children="Logout"
-              onClick={handleLogout}
-            />
-          </div>
+          user?.full_name ? (
+            <div className="space-x-4 flex">
+              <span className={`text-[16px] font-semibold ${isHome ? "text-white p-2" : "text-black my-auto"}`}>Welcome, {user?.full_name.split(" ")[0]}</span>
+              <Button
+                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
+                variant={`${isHome ? "white" : ""}`}
+                children="Logout"
+                onClick={handleLogout}
+              />
+            </div>
+          ) : (
+            <div className="space-x-4 flex">
+              <Button
+                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
+                variant={`${isHome ? "white" : ""}`}
+                children="Login"
+                onClick={() => navigate("/login")}
+              />
+
+              <Button
+                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
+                variant={`${isHome ? "white" : ""}`}
+                children="Signup"
+                onClick={() => navigate("/signup")}
+              />
+            </div>
+          )
         }
         {
           user?.role === "agent" &&
           <Button
-            className="p-2 h-10"
+            className={`p-2 h-10 text-sm lg:text-base ${isHome ? "text-black" : "text-white"}`}
+            variant={`${isHome ? "white" : ""}`}
             children="Submit Address"
             onClick={openModal}
           />
@@ -299,11 +325,37 @@ const Navbar = ({
           >
             Existing Owner Payment
           </a>
-          <Button
-            className="p-2"
-            children="Logout"
-            onClick={handleLogout}
-          />
+          {
+            user?.full_name ? (
+              <Button
+                className="p-2"
+                children="Logout"
+                onClick={handleLogout}
+              />
+            ) : (
+              <>
+                <Button
+                  className="p-2 h-10"
+                  children="Login"
+                  onClick={() => navigate("/login")}
+                />
+
+                <Button
+                  className="p-2 h-10"
+                  children="Signup"
+                  onClick={() => navigate("/signup")}
+                />
+              </>
+            )
+          }
+          {
+            user?.role === "agent" &&
+            <Button
+              className="p-2"
+              children="Submit Address"
+              onClick={openModal}
+            />
+          }
         </div>
       </div>
     </nav>
