@@ -5,4 +5,5 @@ export const ROUTES = {
     Login: '/login',
     SignUp: '/signup',
     RefrralDashboard: '/referral-dashboard',
+    ListAddress: '/list-address',
 }

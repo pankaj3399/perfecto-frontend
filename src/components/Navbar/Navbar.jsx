@@ -7,7 +7,7 @@ import Button from "../Button/Button";
 import { setUser } from "../../feature/user/userSlice";
 import axios from "axios";
 import AddressModal from "../Modal/AddressModal";
-import { set } from "lodash";
+import { getCookie } from "../../utils/helper";
 
 const Navbar = ({
   searchedValue,
@@ -35,25 +35,6 @@ const Navbar = ({
   }
   const closeModal = () => {
     setIsModalOpen(false);
-  }
-
-
-  /**
- * This function is used to get the cookie value by name
- * @param {string} name - cookie name
- */
-  function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-
-    for (let i = 0; i < cookieArr.length; i++) {
-      let cookiePair = cookieArr[i].split("=");
-
-      if (name === cookiePair[0].trim()) {
-        return decodeURIComponent(cookiePair[1]);
-      }
-    }
-
-    return null;
   }
 
   // useEffect(()=>{
@@ -232,42 +213,46 @@ const Navbar = ({
         </a>
         {
           user?.full_name ? (
-            <div className="space-x-4 flex">
+            <>
               <span className={`text-[16px] font-semibold ${isHome ? "text-white p-2" : "text-black my-auto"}`}>Welcome, {user?.full_name.split(" ")[0]}</span>
-              <Button
-                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
-                variant={`${isHome ? "white" : ""}`}
-                children="Logout"
+              <p
+                className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+                  }`}
                 onClick={handleLogout}
-              />
-            </div>
+              > Logout </p>
+            </>
           ) : (
-            <div className="space-x-4 flex">
-              <Button
-                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
-                variant={`${isHome ? "white" : ""}`}
-                children="Login"
+            <>
+              <p
+                className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+                  }`}
                 onClick={() => navigate("/login")}
-              />
+              > Login </p>
 
-              <Button
-                className={`p-2 h-10 ${isHome ? "text-black" : "text-white"}`}
-                variant={`${isHome ? "white" : ""}`}
-                children="Signup"
+              <p
+                className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+                  }`}
                 onClick={() => navigate("/signup")}
-              />
-            </div>
+              > Signup </p>
+            </>
           )
         }
         {
           user?.role === "agent" &&
-          <Button
-            className={`p-2 h-10 text-sm lg:text-base ${isHome ? "text-black" : "text-white"}`}
-            variant={`${isHome ? "white" : ""}`}
-            children="Submit Address"
+          <p
+            className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+              }`}
             onClick={openModal}
-          />
+          > Submit Address</p>
         }
+        {/* {
+          user.role === "agent" &&
+          <p
+            className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+              }`}
+            onClick={() => navigate("/list-address")}
+          > List Address</p>
+        } */}
       </div>
       <AddressModal isOpen={isModalOpen} closeModal={closeModal} />
       <div className="md:hidden flex items-center mt-[10px]">
@@ -327,34 +312,29 @@ const Navbar = ({
           </a>
           {
             user?.full_name ? (
-              <Button
-                className="p-2"
-                children="Logout"
+              <p
+                className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
                 onClick={handleLogout}
-              />
+              > Logout </p>
             ) : (
               <>
-                <Button
-                  className="p-2 h-10"
-                  children="Login"
+                <p
+                  className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
                   onClick={() => navigate("/login")}
-                />
-
-                <Button
-                  className="p-2 h-10"
-                  children="Signup"
+                > Login </p>
+                <p
+                  className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
                   onClick={() => navigate("/signup")}
-                />
+                > Signup </p>
               </>
             )
           }
           {
             user?.role === "agent" &&
-            <Button
-              className="p-2"
-              children="Submit Address"
+            <p
+              className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
               onClick={openModal}
-            />
+            > Submit Address </p>
           }
         </div>
       </div>

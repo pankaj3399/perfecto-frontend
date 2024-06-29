@@ -7,27 +7,29 @@ import BuyPage from '../pages/BuyPage/BuyPage';
 import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
 import RefrralDashboard from '../pages/RefrralDashboard/RefrralDashboard';
+import ListAddress from '../pages/ListAddress/ListAddress';
 
 const Router = () => {
 
-    const RouteWithRole = ({ Element }) => {
-        return (
-          <>
-            <Element/>
-          </>
-        );
-      }
+  const RouteWithRole = ({ Element }) => {
+    return (
+      <>
+        <Element />
+      </>
+    );
+  }
 
   return (
     <div>
-        <Routes>
-            <Route exact path={ROUTES.Home} element={<RouteWithRole Element={Home} component={Home} />}></Route>
-            <Route exact path={ROUTES.PropertyDetails} element={<RouteWithRole Element={PropertyDetails} component={PropertyDetails} />}></Route>
-            <Route exact path={ROUTES.BuyPage} element={<RouteWithRole Element={BuyPage} component={BuyPage} />}></Route>
-            <Route exact path={ROUTES.Login} element={<RouteWithRole Element={Login} component={Login} />}></Route>
-            <Route exact path={ROUTES.SignUp} element={<RouteWithRole Element={SignUp} component={SignUp} />}></Route>
-            <Route exact path={ROUTES.RefrralDashboard} element={<RouteWithRole Element={RefrralDashboard} component={RefrralDashboard} />}></Route>
-        </Routes> 
+      <Routes>
+        <Route exact path={ROUTES.Home} element={<RouteWithRole Element={Home} component={Home} />}></Route>
+        <Route exact path={ROUTES.PropertyDetails} element={<RouteWithRole Element={PropertyDetails} component={PropertyDetails} />}></Route>
+        <Route exact path={ROUTES.BuyPage} element={<RouteWithRole Element={BuyPage} component={BuyPage} />}></Route>
+        <Route exact path={ROUTES.Login} element={<RouteWithRole Element={Login} component={Login} />}></Route>
+        <Route exact path={ROUTES.SignUp} element={<RouteWithRole Element={SignUp} component={SignUp} />}></Route>
+        <Route exact path={ROUTES.RefrralDashboard} element={<RouteWithRole Element={RefrralDashboard} component={RefrralDashboard} />}></Route>
+        <Route exact path={ROUTES.ListAddress} element={<RouteWithRole Element={ListAddress} component={ListAddress} />}></Route>
+      </Routes>
     </div>
   )
 }
