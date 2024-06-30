@@ -19,6 +19,7 @@ const Navbar = ({
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === `/`;
+  const isListAddress = location.pathname === `/list-address`;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isValueChanging, setIsValueChanging] = useState(false);
 
@@ -110,9 +111,9 @@ const Navbar = ({
     >
       <div className="flex items-center space-x-4">
         <div className="cursor-pointer">
-          {isHome ? (
+          {isHome || isListAddress ? (
             <div
-              className="text-[28px] font-semibold text-white"
+              className={`text-[28px] font-semibold ${isListAddress ? "text-black" : "text-white"}`}
               onClick={() => navigate("/")}
             >
               PERFECTO
@@ -245,14 +246,14 @@ const Navbar = ({
             onClick={openModal}
           > Submit Address</p>
         }
-        {/* {
-          user.role === "agent" &&
+        {
+          user.role === "admin" &&
           <p
             className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
               }`}
             onClick={() => navigate("/list-address")}
           > List Address</p>
-        } */}
+        }
       </div>
       <AddressModal isOpen={isModalOpen} closeModal={closeModal} />
       <div className="md:hidden flex items-center mt-[10px]">
@@ -284,9 +285,7 @@ const Navbar = ({
           </button>
         </div>
         <div className="flex flex-col space-y-4 p-4">
-          {/* <div>
-            <p>Welcome, {user?.full_name}</p>
-          </div> */}{
+          {
             user?.full_name &&
             <span className={`text-[16px] font-semibold text-black my-auto`}>Welcome, {user?.full_name.split(" ")[0]}</span>
           }
@@ -335,6 +334,13 @@ const Navbar = ({
               className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
               onClick={openModal}
             > Submit Address </p>
+          }
+          {
+            user.role === "admin" &&
+            <p
+              className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+              onClick={() => navigate("/list-address")}
+            > List Address</p>
           }
         </div>
       </div>
