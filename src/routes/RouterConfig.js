@@ -6,4 +6,5 @@ export const ROUTES = {
     SignUp: '/signup',
     RefrralDashboard: '/referral-dashboard',
     ListAddress: '/list-address',
+    WishList: '/wishlist',
 }

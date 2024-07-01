@@ -16,19 +16,19 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
     minLot: null,
     maxLot: null,
     minYearBuilt: null,
-    maxYearBuilt: null
+    maxYearBuilt: null,
   });
-  const [statuses, setStatuses] = useState([])
+  const [statuses, setStatuses] = useState([]);
 
   const handleFilterClick = () => {
     setShowFilters(!showFilters);
   };
 
   const handleChange = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setFilterValues({
       ...filterValues,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -44,77 +44,83 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(
-      filterValues.minPrice, filterValues.maxPrice,
-      filterValues.minBath, filterValues.maxBath,
-      filterValues.minBeds, filterValues.maxBeds,
-      filterValues.minSqft, filterValues.maxSqft,
-      filterValues.minLot, filterValues.maxLot,
-      filterValues.minYearBuilt, filterValues.maxYearBuilt,
+      filterValues.minPrice,
+      filterValues.maxPrice,
+      filterValues.minBath,
+      filterValues.maxBath,
+      filterValues.minBeds,
+      filterValues.maxBeds,
+      filterValues.minSqft,
+      filterValues.maxSqft,
+      filterValues.minLot,
+      filterValues.maxLot,
+      filterValues.minYearBuilt,
+      filterValues.maxYearBuilt,
       statuses
     );
-    if(showFilters)setShowFilters(false); 
+    if (showFilters) setShowFilters(false);
   };
 
-  const handleSelectStatus = (type) =>{
-    if(statuses.includes(type)){
-      const newList = statuses.filter((item)=>item!==type)
-      setStatuses(newList)
-    }else{
-      setStatuses((prev)=>[...prev,type])
+  const handleSelectStatus = (type) => {
+    if (statuses.includes(type)) {
+      const newList = statuses.filter((item) => item !== type);
+      setStatuses(newList);
+    } else {
+      setStatuses((prev) => [...prev, type]);
     }
-  }
+  };
 
-  const handleMaxPriceChange = (e) =>{
+  const handleMaxPriceChange = (e) => {
     e.preventDefault();
-    setMaxPrice(e.target.value)
-  }
+    setMaxPrice(e.target.value);
+  };
 
-  const handleMinPriceChange = (e) =>{
+  const handleMinPriceChange = (e) => {
     e.preventDefault();
-    setMinPrice(e.target.value)
-  }
+    setMinPrice(e.target.value);
+  };
 
   return (
     <div>
       <div className="flex gap-4 items-center p-4 bg-gray-100 rounded-md shadow-sm">
-        <Select
-          options={[
-            { value: 1000000, label: "$10000k" },
-            { value: 2000000, label: "$20000k" },
-            { value: 3000000, label: "$30000k"},
-            { value: 4000000, label: "$40000k"},
-            { value: 5000000, label: "$50000k"}
-          ]}
-          name="minPrice"
-          placeholder="$ No Min"
-          className="w-full border rounded-md p-2"
-          // onChange={handleChange}
-          handleChange={handleMinPriceChange}
-        />
-        <span className="text-gray-500">-</span>
-        <Select
-          options={[
-            { value: 1000000, label: "$10000k" },
-            { value: 2000000, label: "$20000k" },
-            { value: 3000000, label: "$30000k"},
-            { value: 4000000, label: "$40000k"},
-            { value: 5000000, label: "$50000k"}
-          ]}
-          name="maxPrice"
-          placeholder="$ No Max"
-          className="w-full border rounded-md p-2"
-          // onChange={handleChange}
-          handleChange={handleMaxPriceChange}
-        />
+        <div className="flex flex-col">
+          <label className="font-medium sm:text-md text-[14px] mb-1">Minimum Price</label>
+          <input
+            type="number"
+            name="minPrice"
+            placeholder="$ Minimum Price"
+            className="w-full border rounded-md p-2 text-[14px] focus:outline-none"
+            onChange={handleMinPriceChange}
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="font-medium sm:text-md text-[14px] mb-1">Maximum Price</label>
+          <input
+            type="number"
+            name="maxPrice"
+            placeholder="$ Maximum Price"
+            className="w-full border rounded-md p-2 text-[14px] focus:outline-none"
+            onChange={handleMaxPriceChange}
+          />
+        </div>
         <Button
-          className="border p-2 rounded-md"
+          className="border p-2 rounded-md mt-6"
           variant="white"
           onClick={handleFilterClick}
           placeholder="Filter"
         />
       </div>
       {showFilters && (
-        <div className="absolute sm:mt-0 mt-10 bg-opacity-50 flex justify-center items-center z-50" style={{ right: 0, left: 0, top: '5%', marginRight: 'auto', marginLeft: 'auto' }}>
+        <div
+          className="absolute sm:mt-0 mt-10 bg-opacity-50 flex justify-center items-center z-50"
+          style={{
+            right: 0,
+            left: 0,
+            top: "5%",
+            marginRight: "auto",
+            marginLeft: "auto",
+          }}
+        >
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
             <div className="flex justify-between items-center mb-4 border-b pb-2">
               <h2 className="text-2xl font-bold">Filters</h2>
@@ -189,14 +195,11 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
                 </div>
               </div>
               <div className="flex flex-col col-span-2">
-                <label className="font-medium text-lg mb-2">Listing Status</label>
+                <label className="font-medium text-lg mb-2">
+                  Listing Status
+                </label>
                 <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 border p-4 rounded-md">
-                  {[
-                    "Coming Soon",
-                    "Active",
-                    "Pending",
-                    "Sold",
-                  ].map((type) => (
+                  {["Coming Soon", "Active", "Pending", "Sold"].map((type) => (
                     <label
                       key={type}
                       className="flex items-center whitespace-nowrap text-gray-700"
@@ -205,7 +208,7 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
                         type="checkbox"
                         className="mr-2 cursor-pointer"
                         checked={statuses.includes(type)}
-                        onChange={()=>handleSelectStatus(type)}
+                        onChange={() => handleSelectStatus(type)}
                       />{" "}
                       {type}
                     </label>
@@ -301,7 +304,9 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
               </div>
             </div>
             <div className="flex justify-end border-t pt-4">
-              <Button className="p-4" onClick={handleSubmit}>Search</Button>
+              <Button className="p-4" onClick={handleSubmit}>
+                Search
+              </Button>
             </div>
           </div>
         </div>

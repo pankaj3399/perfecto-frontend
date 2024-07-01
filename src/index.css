@@ -45,3 +45,16 @@
   width: 100%;
 }
 
+
+.PhoneInputInput{
+  display: block;
+  width: 100%;
+}
+
+.PhoneInputInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+}

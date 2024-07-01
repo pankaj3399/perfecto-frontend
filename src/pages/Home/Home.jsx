@@ -8,7 +8,7 @@ import { faBuilding, faLocation } from "@fortawesome/free-solid-svg-icons";
 import cities from "../../data/csvjson.json";
 
 const Home = () => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [places, setPlaces] = useState([]);
   const [buildings, setBuildings] = useState([]);
   const [recommendedproperties, setRecommendedproperties] = useState(null);
@@ -28,7 +28,9 @@ const Home = () => {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/recommendedProperties`);
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/recommendedProperties`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch property details");
         }
@@ -44,12 +46,16 @@ const Home = () => {
   const fetchSuggestions = async (searchValue) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/search?address=${searchValue}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/search?address=${searchValue}`
+      );
       const responseData = await response.json();
-      const suggestedCities = cities.data?.filter((city) => {
-        const regex = new RegExp(searchValue, "i");
-        return regex.test(city.city);
-      }).slice(0, 5);
+      const suggestedCities = cities.data
+        ?.filter((city) => {
+          const regex = new RegExp(searchValue, "i");
+          return regex.test(city.city);
+        })
+        .slice(0, 5);
 
       setPlaces(suggestedCities);
       setBuildings(() =>
@@ -77,7 +83,10 @@ const Home = () => {
     };
   };
 
-  const debouncedFetchSuggestions = useCallback(debounce(fetchSuggestions, 500), []);
+  const debouncedFetchSuggestions = useCallback(
+    debounce(fetchSuggestions, 500),
+    []
+  );
 
   useEffect(() => {
     if (value) {
@@ -94,7 +103,7 @@ const Home = () => {
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative text-center">
           <h1 className="sm:text-5xl text-3xl font-semibold">
-            Find your place
+            Find your perfecto home
           </h1>
           <div className="relative inline-block mt-4 sm:mt-6 text-black max-w-3xl w-[70vw]">
             <Search setSearch={setValue} />

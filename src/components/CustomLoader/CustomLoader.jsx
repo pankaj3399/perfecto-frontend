@@ -1,4 +1,4 @@
-// Loader.js
+
 
 import React from "react";
 import { css } from "@emotion/react";

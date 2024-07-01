@@ -1,14 +1,17 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import Button from "../../components/Button/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 const SignUp = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm();
 
@@ -20,7 +23,8 @@ const SignUp = () => {
       email: data.email,
       password: data.password,
       role: data.role,
-    }
+      phone: data.phone, // Include phone number in the payload
+    };
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/signup`,
@@ -31,8 +35,12 @@ const SignUp = () => {
         toast.success("User registered successfully, Please login to continue");
       }
     } catch (error) {
-      console.log(error.response.data.detail || "Something went wrong, try again");
-      toast.error(error.response.data.detail || "Something went wrong, try again");
+      console.log(
+        error.response.data.detail || "Something went wrong, try again"
+      );
+      toast.error(
+        error.response.data.detail || "Something went wrong, try again"
+      );
     }
   };
 
@@ -54,7 +62,7 @@ const SignUp = () => {
               {...register("firstName", {
                 required: "First Name is required",
               })}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 mt-1 border rounded-md"
             />
             {errors.firstName && (
               <p className="mt-1 text-sm text-red-600">
@@ -109,6 +117,27 @@ const SignUp = () => {
                 {errors.email.message}
               </p>
             )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Phone Number
+            </label>
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  defaultCountry="US"
+                  {...field}
+                  id="phone"
+                  className="w-full px-3 py-2 mt-1 border rounded-md"
+                />
+              )}
+            />
           </div>
 
           <div>

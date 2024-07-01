@@ -11,6 +11,7 @@ import PaymentCalculator from "../../components/PaymentCalculator/PaymentCalcula
 import Cards from "../../components/Cards/Cards";
 import GoogleMaps from "../../components/GoogleMaps";
 import CustomLoader from "../../components/CustomLoader/CustomLoader";
+import { ToastContainer, toast } from "react-toastify";
 
 const PropertyDetails = () => {
   const navigate = useNavigate();
@@ -124,6 +125,15 @@ const PropertyDetails = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy the link');
+    }
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <div className="w-full z-10 px-4 border-b">
@@ -165,6 +175,7 @@ const PropertyDetails = () => {
                 className={"border-[2px]"}
                 placeholder="Share"
                 variant="white"
+                onClick={copyToClipboard}
               >
                 <FiShare className="ml-2 text-[18px] text-[#800080] transform rotate-90" />
               </Button>
@@ -228,13 +239,6 @@ const PropertyDetails = () => {
           <div className="mt-4">
             <h3 className="text-[18px] sm:px-0 px-[24px]">
               {description}
-              {showMore && <>Additional content goes here...</>}
-              <button
-                onClick={toggleShowMore}
-                className="text-[#800080] font-medium"
-              >
-                {showMore ? "Collapse" : "Continue Reading"}
-              </button>
             </h3>
           </div>
           <div className="mt-[42px] sm:px-0 px-[24px]">
@@ -397,7 +401,7 @@ const PropertyDetails = () => {
         )}
       </div>
 
-      <div className="sm:px-[150px] px-[24px]">
+      {/* <div className="sm:px-[150px] px-[24px]">
         <h2 className="text-[24px] font-semibold mb-2">
           Property History for {name}
         </h2>
@@ -427,7 +431,7 @@ const PropertyDetails = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       <div className="sm:px-[150px] px-[24px] py-[24px]">
         <h2 className="text-[24px] font-semibold mb-2">
           Public Records for {name}
