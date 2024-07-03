@@ -9,6 +9,7 @@ import SignUp from '../pages/SignUp/SignUp';
 import RefrralDashboard from '../pages/RefrralDashboard/RefrralDashboard';
 import ListAddress from '../pages/ListAddress/ListAddress';
 import WishList from '../pages/WishList/WishList';
+import Profile from '../pages/Profile/Profile';
 
 const Router = () => {
 
@@ -31,6 +32,7 @@ const Router = () => {
         <Route exact path={ROUTES.RefrralDashboard} element={<RouteWithRole Element={RefrralDashboard} component={RefrralDashboard} />}></Route>
         <Route exact path={ROUTES.ListAddress} element={<RouteWithRole Element={ListAddress} component={ListAddress} />}></Route>
         <Route exact path={ROUTES.WishList} element={<RouteWithRole Element={WishList} component={WishList} />}></Route>
+        <Route exact path={ROUTES.Profile} element={<RouteWithRole Element={Profile} component={Profile} />}></Route>
       </Routes>
     </div>
   )

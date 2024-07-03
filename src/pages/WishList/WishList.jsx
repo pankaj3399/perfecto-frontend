@@ -1,41 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Cards from "../../components/Cards/Cards";
+import { getCookie } from "../../utils/helper";
+import { useNavigate } from "react-router-dom";
 
 function WishList() {
   // Dummy data for the cards
-  const dummyData = [
-    {
-      image:
-        "https://www.compass.com/m/6db15aba5bd9203e944e62d9f16905e3c653b815_img_0_ce4f6/640x480.webp",
-      price: 500000,
-      address: "123 Main St, Springfield",
-      beds: 3,
-      baths: 2,
-      sqft: 1500,
-      comingSoon: true,
-    },
-    {
-      image:
-        "https://www.compass.com/m/c43df6c28dd86417eefcb075b31db236b89cb4aa_img_0_8e974/640x480.webp",
-      price: 750000,
-      address: "456 Elm St, Springfield",
-      beds: 4,
-      baths: 3,
-      sqft: 2000,
-      comingSoon: false,
-    },
-    {
-      image:
-        "https://www.compass.com/m/0/c8bb4f44-3a6a-4046-8303-4b0e2e697738/1500x1000.webp",
-      price: 1000000,
-      address: "789 Oak St, Springfield",
-      beds: 5,
-      baths: 4,
-      sqft: 3000,
-      comingSoon: true,
-    },
-  ];
+  const [wishlistProperties, setWishlistProperties] = useState([]);
+  const access_token = getCookie('access_token');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchWishList = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/wishlist`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch wishlist");
+        }
+        const data = await response.json();
+        console.log("Wishlist data:", data);
+        setWishlistProperties(data);
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    }
+
+    fetchWishList();
+  }, [access_token]);
+
+  const goToPropertyDetails = (_id) => {
+    navigate(`/property-details/${_id}`);
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -47,21 +50,24 @@ function WishList() {
           My Wishlisted Properties
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-          {dummyData.map((data, index) => (
-            <Cards
-              key={index}
-              image={data.image}
-              price={data.price}
-              address={data.address}
-              beds={data.beds}
-              baths={data.baths}
-              sqft={data.sqft}
-              comingSoon={data.comingSoon}
-            />
+          {wishlistProperties.map((data, index) => (
+            <div
+              onClick={() => goToPropertyDetails(data._id)}
+              key={index}>
+              <Cards
+                image={data.image}
+                price={data.price}
+                address={data.address}
+                beds={data.beds}
+                baths={data.baths}
+                sqft={data.sqft}
+                comingSoon={data.comingSoon}
+              />
+            </div>
           ))}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 

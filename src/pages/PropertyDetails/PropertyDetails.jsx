@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Button from "../../components/Button/Button";
-import { IoMdStarOutline } from "react-icons/io";
+import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import { FiShare } from "react-icons/fi";
 import Slider from "../../components/Slider/Slider";
 import agent from "../../assets/images/agent.jpg";
@@ -12,6 +12,8 @@ import Cards from "../../components/Cards/Cards";
 import GoogleMaps from "../../components/GoogleMaps";
 import CustomLoader from "../../components/CustomLoader/CustomLoader";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import { getCookie } from "../../utils/helper";
 
 const PropertyDetails = () => {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ const PropertyDetails = () => {
   const [properties, setProperties] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProperties, setSimilarProperties] = useState([{}]);
+  const access_token = getCookie('access_token');
 
   const handleToggleView = () => {
     if (showMore) {
@@ -36,23 +39,24 @@ const PropertyDetails = () => {
 
   const { _id } = useParams();
 
-  useEffect(() => {
-    const fetchPropertyDetails = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/property/${_id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch property details");
-        }
-        const data = await response.json();
-        setProperties(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching property details:", error);
+  const fetchPropertyDetails = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/property/${_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch property details");
       }
-    };
+      const data = await response.json();
+      setProperties(data);
+      console.log(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching property details:", error);
+    }
+  };
 
+  useEffect(() => {
     const fetchSimilarProperties = async () => {
       try {
         const response = await fetch(
@@ -118,6 +122,7 @@ const PropertyDetails = () => {
     description,
     propertyInformation,
     publicRecords,
+    wishlisted
   } = properties;
 
   const goToPropertyDetails = (_id) => {
@@ -131,6 +136,52 @@ const PropertyDetails = () => {
       toast.success('Link copied to clipboard!');
     } catch (err) {
       toast.error('Failed to copy the link');
+    }
+  };
+
+  const handleSaveProperty = async () => {
+    try {
+      const reponse = await axios.post(`${process.env.REACT_APP_API_URL}/wishlist/add/${_id}`,
+        {},  // Empty payload
+        {
+          headers: {
+            'Authorization': `Bearer ${access_token}`,
+          }
+        }
+      );
+      if (reponse.status === 200) {
+        toast.success('Property saved successfully to wishlist');
+        fetchPropertyDetails();
+      } else {
+        toast.error('Failed to save property');
+      }
+    } catch (error) {
+      console.error("Error saving property:", error);
+      toast.error(error.response.data.detail || 'Failed to save property');
+    }
+  };
+
+  const handleRemoveProperty = async () => {
+    try {
+      const reponse = await axios.post(`${process.env.REACT_APP_API_URL}/wishlist/remove/${_id}`,
+        {},  // Empty payload
+        {
+          headers: {
+            'Authorization': `Bearer ${access_token}`,
+          }
+        }
+      );
+      if (reponse.status === 200) {
+        toast.success('Property removed successfully from wishlist');
+        fetchPropertyDetails();
+      }
+      else {
+        toast.error('Failed to remove property');
+      }
+    }
+    catch (error) {
+      console.error("Error removing property:", error);
+      toast.error(error.response.data.detail || 'Failed to remove property');
     }
   };
 
@@ -167,10 +218,19 @@ const PropertyDetails = () => {
               <p className="text-[#6c6c6c]">$1,175 / Sq. Ft.</p>
             </div>
             <div className="flex gap-4 items-center justify-center ml-2">
-              <Button variant="blue">
-                <IoMdStarOutline className="text-[24px] mr-2 text-white" />
-                Save
-              </Button>
+              {
+                wishlisted ? (
+                  <Button variant="blue" onClick={handleRemoveProperty}>
+                    <IoMdStar className="text-[24px] mr-2 text-white" />
+                    Saved
+                  </Button>
+                ) : (
+                  <Button variant="blue" onClick={handleSaveProperty}>
+                    <IoMdStarOutline className="text-[24px] mr-2 text-white" />
+                    Save
+                  </Button>
+                )
+              }
               <Button
                 className={"border-[2px]"}
                 placeholder="Share"
@@ -305,11 +365,10 @@ const PropertyDetails = () => {
               ([key, value], index) => (
                 <div
                   key={index}
-                  className={`flex justify-between items-center sm:text-[16px] text-[14px] mt-2 ${
-                    index < Object.entries(propertyListingDetails).length - 1
-                      ? "border-b"
-                      : ""
-                  }`}
+                  className={`flex justify-between items-center sm:text-[16px] text-[14px] mt-2 ${index < Object.entries(propertyListingDetails).length - 1
+                    ? "border-b"
+                    : ""
+                    }`}
                 >
                   <p>{transformKeyForDisplay(key)}</p>
                   <p>
@@ -490,8 +549,8 @@ const PropertyDetails = () => {
                 <div>
                   <strong>
                     {key === "aboveGradeFinishedSqFt" ||
-                    key === "totalFinishedSqFt" ||
-                    key === "lotSize"
+                      key === "totalFinishedSqFt" ||
+                      key === "lotSize"
                       ? `${value} SqFt`
                       : value}
                   </strong>

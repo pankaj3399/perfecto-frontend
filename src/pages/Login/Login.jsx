@@ -19,6 +19,7 @@ const Login = () => {
     formData.append("username", data.email);
     formData.append("password", data.password);
     formData.append("scope", data.role)
+    console.log(process.env.REACT_APP_API_URL);
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/token`, formData);

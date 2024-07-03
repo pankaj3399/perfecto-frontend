@@ -18,13 +18,16 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
+    console.log(data);
     const payload = {
       full_name: `${data.firstName} ${data?.lastName}`,
       email: data.email,
       password: data.password,
       role: data.role,
       phone: data.phone, // Include phone number in the payload
+      referral_code: data.referral,
     };
+    console.log("Payload", payload);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/signup`,
@@ -49,48 +52,51 @@ const SignUp = () => {
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              First Name
-            </label>
-            <input
-              type="text"
-              id="firstName"
-              {...register("firstName", {
-                required: "First Name is required",
-              })}
-              className="w-full px-3 py-2 mt-1 border rounded-md"
-            />
-            {errors.firstName && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.firstName.message}
-              </p>
-            )}
-          </div>
 
-          <div>
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="lastName"
-              {...register("lastName", {
-                required: "Last Name is required",
-              })}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.lastName && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.lastName.message}
-              </p>
-            )}
+          <div className="flex space-x-2 mt-2">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First Name
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                {...register("firstName", {
+                  required: "First Name is required",
+                })}
+                className="w-full px-3 py-2 border rounded-md"
+              />
+              {errors.firstName && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                {...register("lastName", {
+                  required: "Last Name is required",
+                })}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.lastName && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div>
@@ -110,7 +116,7 @@ const SignUp = () => {
                   message: "Invalid email format",
                 },
               })}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">
@@ -134,7 +140,7 @@ const SignUp = () => {
                   defaultCountry="US"
                   {...field}
                   id="phone"
-                  className="w-full px-3 py-2 mt-1 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               )}
             />
@@ -157,13 +163,28 @@ const SignUp = () => {
                   message: "Password must be at least 6 characters",
                 },
               })}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.password && (
               <p className="mt-1 text-sm text-red-600">
                 {errors.password.message}
               </p>
             )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Referral Code
+            </label>
+            <input
+              type="text"
+              id="referral"
+              {...register("referral")}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
 
           <div>
@@ -176,7 +197,7 @@ const SignUp = () => {
             <select
               id="role"
               {...register("role", { required: "Role is required" })}
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select role</option>
               <option value="agent">Agent</option>

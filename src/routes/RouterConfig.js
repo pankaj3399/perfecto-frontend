@@ -1,10 +1,11 @@
 export const ROUTES = {
-    Home:'/',
-    PropertyDetails:'/property-details/:_id',
-    BuyPage:'/buy',
+    Home: '/',
+    PropertyDetails: '/property-details/:_id',
+    BuyPage: '/buy',
     Login: '/login',
     SignUp: '/signup',
     RefrralDashboard: '/referral-dashboard',
     ListAddress: '/list-address',
     WishList: '/wishlist',
+    Profile: '/profile',
 }
