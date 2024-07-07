@@ -8,7 +8,7 @@ const AgentFrom = () => {
     name: "",
     email: "",
     phone: "",
-    description: ""
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -21,16 +21,19 @@ const AgentFrom = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const payload = {
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
-      description: formData.message
+      description: formData.message,
     };
-  
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/contact`, payload);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/contact`,
+        payload
+      );
       console.log("Form submitted successfully", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -77,7 +80,7 @@ const AgentFrom = () => {
           className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         />
       </div>
-      <div className="mb-4 flex items-center">
+      <div className="mb-2 flex items-center">
         <input
           type="checkbox"
           name="prequalification"
@@ -86,25 +89,16 @@ const AgentFrom = () => {
           className="mr-2 leading-tight"
         />
         <label className="text-[14px]">
-          Click here if you want pre-qualification information from{" "}
-          <a href="#" className="text-blue-600">
-            OriginPoint
-          </a>
-          . We are a licensed mortgage lending company (NMLS ID #2185899).
+          Would you like to speak with Perfecto Partnered lender?
         </label>
       </div>
       <div className="text-[14px] text-[#6c6c6c] mb-6">
-        By clicking "send message", you expressly agree that Compass, Inc., its
-        agents, affiliates, and associated third parties may contact you,
-        including with calls or texts by an automated dialing system for
+        By clicking "send message", you expressly agree that Perfecto Homes
+        Inc., its agents, affiliates, and associated third parties may contact
+        you, including with calls or texts by an automated dialing system for
         marketing or promotional purposes - to the number provided above.
         Message/data rates may apply. Accepting this consent is not required to
-        obtain real estate service. You also consent to, authorize, and direct
-        Compass to share your information with{" "}
-        <a href="#" className="text-blue-600">
-          OriginPoint
-        </a>
-        .
+        obtain real estate service. 
       </div>
       <Button className="w-full" placeholder="Send Message" variant="blue" />
     </form>

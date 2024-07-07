@@ -53,7 +53,7 @@ export default function AddressModal({ isOpen, closeModal }) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-[100] bg-black bg-opacity-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
                 <h3 className="text-lg font-bold leading-6 text-gray-900">Enter Addresses</h3>
                 <div className="mt-2 space-y-4 max-h-60 overflow-y-auto pr-2">
@@ -64,7 +64,7 @@ export default function AddressModal({ isOpen, closeModal }) {
                                 value={address}
                                 onChange={(e) => handleAddressChange(index, e.target.value)}
                                 placeholder={`Enter address ${index + 1}`}
-                                className="w-full p-2 border rounded-md pr-10"
+                                className="w-full p-2 border rounded-md pr-10 focus:outline-none text-black"
                             />
                             {addresses.length > 1 && (
                                 <button

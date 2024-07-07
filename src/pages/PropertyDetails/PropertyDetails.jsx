@@ -26,7 +26,7 @@ const PropertyDetails = () => {
   const [properties, setProperties] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProperties, setSimilarProperties] = useState([{}]);
-  const access_token = getCookie('access_token');
+  const access_token = getCookie("access_token");
 
   const handleToggleView = () => {
     if (showMore) {
@@ -41,9 +41,15 @@ const PropertyDetails = () => {
 
   const fetchPropertyDetails = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/property/${_id}`
-      );
+      const url = access_token
+        ? `${process.env.REACT_APP_API_URL}/auth/property/${_id}`
+        : `${process.env.REACT_APP_API_URL}/property/${_id}`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch property details");
       }
@@ -122,7 +128,7 @@ const PropertyDetails = () => {
     description,
     propertyInformation,
     publicRecords,
-    wishlisted
+    wishlisted,
   } = properties;
 
   const goToPropertyDetails = (_id) => {
@@ -133,55 +139,60 @@ const PropertyDetails = () => {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard!');
+      toast.success("Link copied to clipboard!");
     } catch (err) {
-      toast.error('Failed to copy the link');
+      toast.error("Failed to copy the link");
     }
   };
 
   const handleSaveProperty = async () => {
+    if (!access_token) {
+      toast.error("Please login first.");
+      return;
+    }
+
     try {
-      const reponse = await axios.post(`${process.env.REACT_APP_API_URL}/wishlist/add/${_id}`,
-        {},  // Empty payload
+      const reponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/wishlist/add/${_id}`,
+        {}, // Empty payload
         {
           headers: {
-            'Authorization': `Bearer ${access_token}`,
-          }
+            Authorization: `Bearer ${access_token}`,
+          },
         }
       );
       if (reponse.status === 200) {
-        toast.success('Property saved successfully to wishlist');
+        toast.success("Property saved successfully to wishlist");
         fetchPropertyDetails();
       } else {
-        toast.error('Failed to save property');
+        toast.error("Failed to save property");
       }
     } catch (error) {
       console.error("Error saving property:", error);
-      toast.error(error.response.data.detail || 'Failed to save property');
+      toast.error(error.response.data.detail || "Failed to save property");
     }
   };
 
   const handleRemoveProperty = async () => {
     try {
-      const reponse = await axios.post(`${process.env.REACT_APP_API_URL}/wishlist/remove/${_id}`,
-        {},  // Empty payload
+      const reponse = await axios.post(
+        `${process.env.REACT_APP_API_URL}/wishlist/remove/${_id}`,
+        {}, // Empty payload
         {
           headers: {
-            'Authorization': `Bearer ${access_token}`,
-          }
+            Authorization: `Bearer ${access_token}`,
+          },
         }
       );
       if (reponse.status === 200) {
-        toast.success('Property removed successfully from wishlist');
+        toast.success("Property removed successfully from wishlist");
         fetchPropertyDetails();
+      } else {
+        toast.error("Failed to remove property");
       }
-      else {
-        toast.error('Failed to remove property');
-      }
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error removing property:", error);
-      toast.error(error.response.data.detail || 'Failed to remove property');
+      toast.error(error.response.data.detail || "Failed to remove property");
     }
   };
 
@@ -218,19 +229,17 @@ const PropertyDetails = () => {
               <p className="text-[#6c6c6c]">$1,175 / Sq. Ft.</p>
             </div>
             <div className="flex gap-4 items-center justify-center ml-2">
-              {
-                wishlisted ? (
-                  <Button variant="blue" onClick={handleRemoveProperty}>
-                    <IoMdStar className="text-[24px] mr-2 text-white" />
-                    Saved
-                  </Button>
-                ) : (
-                  <Button variant="blue" onClick={handleSaveProperty}>
-                    <IoMdStarOutline className="text-[24px] mr-2 text-white" />
-                    Save
-                  </Button>
-                )
-              }
+              {wishlisted ? (
+                <Button variant="blue" onClick={handleRemoveProperty}>
+                  <IoMdStar className="text-[24px] mr-2 text-white" />
+                  Saved
+                </Button>
+              ) : (
+                <Button variant="blue" onClick={handleSaveProperty}>
+                  <IoMdStarOutline className="text-[24px] mr-2 text-white" />
+                  Save
+                </Button>
+              )}
               <Button
                 className={"border-[2px]"}
                 placeholder="Share"
@@ -297,11 +306,9 @@ const PropertyDetails = () => {
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-[18px] sm:px-0 px-[24px]">
-              {description}
-            </h3>
+            <h3 className="text-[18px] sm:px-0 px-[24px]">{description}</h3>
           </div>
-          <div className="mt-[42px] sm:px-0 px-[24px]">
+          {/* <div className="mt-[42px] sm:px-0 px-[24px]">
             <h3 className="font-semibold text-[24px]">Listing Agent</h3>
             <div className="flex items-center mt-4">
               <img className="w-[100px] h-[100px] rounded-full" src={agent} />
@@ -322,7 +329,7 @@ const PropertyDetails = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {amenities && Object.keys(amenities).length > 0 && (
             <div className="mt-[42px] sm:px-0 px-[24px]">
               <h3 className="font-semibold text-[24px]">Amenities</h3>
@@ -341,7 +348,7 @@ const PropertyDetails = () => {
               </div>
             </div>
           )}
-          <div className="mt-[42px] sm:px-0 px-[24px] sm:w-[820px] block">
+          <div className="mt-[42px] sm:px-0 px-[24px] min-w-[420px] block">
             <h3 className="font-semibold text-[24px]">Location</h3>
             <GoogleMaps
               locations={[
@@ -357,7 +364,7 @@ const PropertyDetails = () => {
           </div>
         </div>
         <div className="col-span-2 mt-2 sm:px-0 px-[24px]">
-          <p className="text-[14px] text-[#6c6c6c] font-semibold">
+          {/* <p className="text-[14px] text-[#6c6c6c] font-semibold">
             LISTING UPDATED: 05/24/2024 07:46 PM
           </p>
           <div>
@@ -383,19 +390,19 @@ const PropertyDetails = () => {
                 </div>
               )
             )}
-          </div>
-          <div className="mt-4">
-            <h3 className="font-semibold text-[20px]">Listing Agent</h3>
+          </div> */}
+          <div className="">
+            <h3 className="font-semibold text-[20px]">Learn More</h3>
           </div>
           <div className="flex items-center mt-2">
-            <img className="w-[100px] h-[100px] rounded-full" src={agent} />
+            <img className="w-[80px] h-[80px] rounded-full" src={agent} />
             <div className="ml-4 text-start">
               <p className="font-semibold text-[16px] sm:text-[18px] text-[#800080]">
-                Shana Rohde-Lynch
+                Perfecto Agent Specialist
               </p>
-              <p className="sm:text-[16px] text-[14px]">Compass</p>
+              <p className="sm:text-[16px] text-[14px]">Perfecto</p>
               <p className="text-[#6c6c6c] sm:text-[16px] text-[14px]">
-                srl@compass.com <br /> P: 415.264.7101 <br /> DRE #01079806
+              Email: main@perfectohome.com <br /> Phone: 415-409-9614
               </p>
             </div>
           </div>
@@ -549,8 +556,8 @@ const PropertyDetails = () => {
                 <div>
                   <strong>
                     {key === "aboveGradeFinishedSqFt" ||
-                      key === "totalFinishedSqFt" ||
-                      key === "lotSize"
+                    key === "totalFinishedSqFt" ||
+                    key === "lotSize"
                       ? `${value} SqFt`
                       : value}
                   </strong>
