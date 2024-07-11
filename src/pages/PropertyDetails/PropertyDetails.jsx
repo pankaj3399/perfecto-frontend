@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "../../components/Button/Button";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import { FiShare } from "react-icons/fi";
@@ -14,6 +15,8 @@ import CustomLoader from "../../components/CustomLoader/CustomLoader";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import { getCookie } from "../../utils/helper";
+import { FaPen } from "react-icons/fa";
+import LoanModal from "../../components/Modal/LoanModal";
 
 const PropertyDetails = () => {
   const navigate = useNavigate();
@@ -26,7 +29,12 @@ const PropertyDetails = () => {
   const [properties, setProperties] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProperties, setSimilarProperties] = useState([{}]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const access_token = getCookie("access_token");
+  
+
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
 
   const handleToggleView = () => {
     if (showMore) {
@@ -196,8 +204,20 @@ const PropertyDetails = () => {
     }
   };
 
+  const handleSaveLoanDetails = (loanDetails) => {
+    console.log("Saved loan details:", loanDetails);
+    setIsModalOpen(false);
+    // You can add additional logic here to save the loan details to the backend if needed.
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden">
+      <ToastContainer />
+      <LoanModal
+        isOpen={isModalOpen}
+        onCloseModal={() => setIsModalOpen(false)}
+        onSave={handleSaveLoanDetails}
+      />
       <div className="w-full z-10 px-4 border-b">
         <Navbar />
       </div>
@@ -248,6 +268,13 @@ const PropertyDetails = () => {
               >
                 <FiShare className="ml-2 text-[18px] text-[#800080] transform rotate-90" />
               </Button>
+              {user?.role === "admin" && (
+                 <Button onClick={() => setIsModalOpen(true)}
+                 >
+                  <FaPen className="text-[14px] mr-2" />
+                  Edit
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -402,7 +429,7 @@ const PropertyDetails = () => {
               </p>
               <p className="sm:text-[16px] text-[14px]">Perfecto</p>
               <p className="text-[#6c6c6c] sm:text-[16px] text-[14px]">
-              Email: main@perfectohome.com <br /> Phone: 415-409-9614
+                Email: main@perfectohome.com <br /> Phone: 415-409-9614
               </p>
             </div>
           </div>

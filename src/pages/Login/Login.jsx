@@ -18,11 +18,14 @@ const Login = () => {
     const formData = new FormData();
     formData.append("username", data.email);
     formData.append("password", data.password);
-    formData.append("scope", data.role)
+    formData.append("scope", data.role);
     console.log(process.env.REACT_APP_API_URL);
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/token`, formData);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/token`,
+        formData
+      );
       if (response.status === 200) {
         document.cookie = `access_token=${response.data.access_token}`;
         document.cookie = `token_type=${response.data.token_type}`;
@@ -31,8 +34,12 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      console.log(error.response?.data?.detail || "Something went wrong, try again");
-      toast.error(error.response?.data?.detail || "Something went wrong, try again");
+      console.log(
+        error.response?.data?.detail || "Something went wrong, try again"
+      );
+      toast.error(
+        error.response?.data?.detail || "Something went wrong, try again"
+      );
     }
   };
 
@@ -111,6 +118,15 @@ const Login = () => {
               Login
             </Button>
           </div>
+          <p className="text-sm text-center">
+            Don't have an account?{" "}
+            <span
+              className="text-[#800080] font-medium cursor-pointer"
+              onClick={() => navigate("/signup")}
+            >
+              Signup
+            </span>
+          </p>
         </form>
       </div>
     </div>
