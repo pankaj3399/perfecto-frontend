@@ -3,8 +3,9 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
+function Slider({ image, propertyImages }) {
+  const images = propertyImages || (image ? [image] : []);
 
-function Slider({ image }) {
   return (
     <div className="text-white text-[20px] w-full max-w-[1360px] mx-auto sticky top-[50px]">
       <Carousel
@@ -37,7 +38,11 @@ function Slider({ image }) {
           )
         }
       >
-         <img src={image} alt="Property" />
+        {images.map((img, index) => (
+          <div key={index}>
+            <img src={img} alt={`Property ${index + 1}`} />
+          </div>
+        ))}
       </Carousel>
     </div>
   );

@@ -1,22 +1,49 @@
 import React, { useState } from "react";
+import axios from "axios";
 import Button from "../Button/Button";
+import { getCookie } from "../../utils/helper";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const LoanModal = ({ isOpen, onCloseModal, onSave }) => {
+const LoanModal = ({ isOpen, onCloseModal, onSave, propertyId }) => {
   const [downPayment, setDownPayment] = useState("");
   const [monthlyPayment, setMonthlyPayment] = useState("");
   const [terms, setTerms] = useState("");
+  const access_token = getCookie('access_token');
 
   const handleInputChange = (e, setter) => {
     setter(e.target.value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const loanDetails = {
-      downPayment,
-      monthlyPayment,
-      terms,
+      monthly_payment: parseFloat(monthlyPayment),
+      down_payment: parseFloat(downPayment),
+      terms: parseInt(terms, 10),
     };
-    onSave(loanDetails);
+
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/property/${propertyId}/update-details`,
+        loanDetails,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        console.log(response.data);
+        toast.success('Loan details saved successfully!');
+        onSave(loanDetails);
+        onCloseModal();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to save loan details. Please try again.');
+    }
   };
 
   if (!isOpen) {

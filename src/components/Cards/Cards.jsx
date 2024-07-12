@@ -1,6 +1,6 @@
 import React from "react";
 
-const Cards = ({ image, price, address, beds, baths, sqft, comingSoon }) => {
+const Cards = ({ image, price, address, beds, baths, sqft, comingSoon, monthlyPayment, downPayment, terms  }) => {
   return (
     <div className="relative w-full h-80 overflow-hidden shadow-lg rounded-lg cursor-pointer transform transition-transform hover:scale-105">
       <img
@@ -17,11 +17,14 @@ const Cards = ({ image, price, address, beds, baths, sqft, comingSoon }) => {
         {/* <div className="text-[20px] font-bold mb-2">${price?.toLocaleString()}</div> */}
         <div className="text-[17px] font-bold mb-2">
           <div>
-            Monthly Payment : ${price?.monthlyPayment?.toLocaleString() || 8000.?.toLocaleString()}{" "}
+            Monthly Payment : $
+            {monthlyPayment?.toLocaleString() || 8000?.toLocaleString()}{" "}
           </div>
           <div>
-            Down Payment : ${price?.downPayment?.toLocaleString() || 20000?.toLocaleString()}
+            Down Payment : $
+            {downPayment?.toLocaleString() || 20000?.toLocaleString()}
           </div>
+          <div>Terms : {terms || 30} Years</div>
         </div>
         <div className="text-[17px] font-semibold">{address}</div>
         <div className="flex mt-2 space-x-4 text-sm">

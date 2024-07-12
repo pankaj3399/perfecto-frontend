@@ -29,9 +29,9 @@ const PropertyDetails = () => {
   const [properties, setProperties] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProperties, setSimilarProperties] = useState([{}]);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const access_token = getCookie("access_token");
-  
 
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
@@ -137,6 +137,7 @@ const PropertyDetails = () => {
     propertyInformation,
     publicRecords,
     wishlisted,
+    propertyImages,
   } = properties;
 
   const goToPropertyDetails = (_id) => {
@@ -207,8 +208,24 @@ const PropertyDetails = () => {
   const handleSaveLoanDetails = (loanDetails) => {
     console.log("Saved loan details:", loanDetails);
     setIsModalOpen(false);
-    // You can add additional logic here to save the loan details to the backend if needed.
   };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const truncateDescription = (text, wordLimit) => {
+    const words = text.split(" ");
+    if (words.length <= wordLimit) {
+      return text;
+    }
+    return words?.slice(0, wordLimit).join(" ") + "...";
+  };
+
+  const wordLimit = 100;
+  const displayDescription = showFullDescription
+    ? description
+    : truncateDescription(description, wordLimit);
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -217,6 +234,7 @@ const PropertyDetails = () => {
         isOpen={isModalOpen}
         onCloseModal={() => setIsModalOpen(false)}
         onSave={handleSaveLoanDetails}
+        propertyId={_id}
       />
       <div className="w-full z-10 px-4 border-b">
         <Navbar />
@@ -269,8 +287,7 @@ const PropertyDetails = () => {
                 <FiShare className="ml-2 text-[18px] text-[#800080] transform rotate-90" />
               </Button>
               {user?.role === "admin" && (
-                 <Button onClick={() => setIsModalOpen(true)}
-                 >
+                <Button onClick={() => setIsModalOpen(true)}>
                   <FaPen className="text-[14px] mr-2" />
                   Edit
                 </Button>
@@ -284,7 +301,7 @@ const PropertyDetails = () => {
       </div>
       <div className="grid sm:grid-cols-5 grid-cols-1 sm:px-[150px] px-0 sm:mt-4 gap-6">
         <div className="col-span-3">
-          <Slider image={image} />
+          <Slider propertyImages={propertyImages} image={image} />
           <div className="sm:hidden block px-[24px]">
             <div className="flex justify-between items-center">
               <div>
@@ -333,7 +350,17 @@ const PropertyDetails = () => {
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-[18px] sm:px-0 px-[24px]">{description}</h3>
+            <h3 className="text-[18px] sm:px-0 px-[24px]">
+              {displayDescription}
+            </h3>
+            {description?.split(" ").length > wordLimit && (
+              <button
+                className="text-[#800080] font-semibold hover:underline mt-2"
+                onClick={toggleDescription}
+              >
+                {showFullDescription ? "See Less" : "See More"}
+              </button>
+            )}
           </div>
           {/* <div className="mt-[42px] sm:px-0 px-[24px]">
             <h3 className="font-semibold text-[24px]">Listing Agent</h3>

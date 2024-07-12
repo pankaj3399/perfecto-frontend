@@ -16,10 +16,10 @@ const defaultOptions = {
   zoomControl: true,
 };
 
-export default function ClusterMap({ latitude, longitude, properties, onBoundsChanged }) {
+export default function ClusterMap({ properties, onBoundsChanged }) {
   const [mapCenter, setMapCenter] = useState({
-    lat: parseFloat(latitude) || 42.361145,
-    lng: parseFloat(longitude) || -71.057083,
+    lat: 37.7749,
+    lng: -122.4194,
   });
   const [selectedProperty, setSelectedProperty] = useState(null);
   const mapRef = useRef(null);
@@ -42,45 +42,36 @@ export default function ClusterMap({ latitude, longitude, properties, onBoundsCh
   };
 
   useEffect(() => {
-    if (latitude && longitude) {
-      setMapCenter({
-        lat: parseFloat(latitude),
-        lng: parseFloat(longitude),
-      });
-    }
-  }, [latitude, longitude]);
+    const updateMarkers = () => {
+      if (mapRef.current && isLoaded) {
+        // Clear previous markers
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
 
-  const updateMarkers = () => {
-    if (mapRef.current && isLoaded) {
-      // Clear previous markers
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
+        // Create new markers
+        const newMarkers = properties.map(point => {
+          const marker = new window.google.maps.Marker({
+            position: {
+              lat: parseFloat(point.latitude),
+              lng: parseFloat(point.longitude),
+            }
+          });
 
-      // Create new markers
-      const newMarkers = properties.map(point => {
-        const marker = new window.google.maps.Marker({
-          position: {
-            lat: parseFloat(point.latitude),
-            lng: parseFloat(point.longitude),
-          }
+          marker.addListener("click", () => handleMarkerClick(point));
+          return marker;
         });
 
-        marker.addListener("click", () => handleMarkerClick(point));
-        return marker;
-      });
+        markersRef.current = newMarkers;
 
-      markersRef.current = newMarkers;
-
-      if (markerClustererRef.current) {
-        markerClustererRef.current.clearMarkers();
-        markerClustererRef.current.addMarkers(markersRef.current);
-      } else {
-        markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+        if (markerClustererRef.current) {
+          markerClustererRef.current.clearMarkers();
+          markerClustererRef.current.addMarkers(markersRef.current);
+        } else {
+          markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+        }
       }
-    }
-  };
+    };
 
-  useEffect(() => {
     if (JSON.stringify(prevPropertiesRef.current) !== JSON.stringify(properties)) {
       updateMarkers();
       prevPropertiesRef.current = properties; // Update the cached properties
