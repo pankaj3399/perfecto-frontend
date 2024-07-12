@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Button from "../Button/Button";
 import { getCookie } from "../../utils/helper";
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const LoanModal = ({ isOpen, onCloseModal, onSave, propertyId }) => {
@@ -52,6 +52,7 @@ const LoanModal = ({ isOpen, onCloseModal, onSave, propertyId }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <ToastContainer />
       <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto">
         <h3 className="text-lg font-bold leading-6 text-gray-900">Loan</h3>
         <input

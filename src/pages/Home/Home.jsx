@@ -6,6 +6,7 @@ import Search from "../../components/Search/Search";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faLocation } from "@fortawesome/free-solid-svg-icons";
 import cities from "../../data/csvjson.json";
+import Banner from "../../assets/images/hero.jpg";
 
 const Home = () => {
   const [value, setValue] = useState("");
@@ -99,11 +100,22 @@ const Home = () => {
       <div className="absolute w-full z-10 px-4">
         <Navbar />
       </div>
-      <div className="relative hero-bg flex justify-center items-center text-white">
+      <div className="relative  flex justify-center items-center text-white"
+      style={{
+        backgroundImage: `url(${Banner})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        height: '90vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative text-center">
           <h1 className="sm:text-5xl text-3xl font-semibold">
-            Find your perfecto home
+            Find Your Perfecto Home
           </h1>
           <div className="relative inline-block mt-4 sm:mt-6 text-black max-w-3xl w-[70vw]">
             <Search setSearch={setValue} />
