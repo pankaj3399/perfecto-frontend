@@ -22,8 +22,8 @@ const Footer = () => {
             </span>
           </div>
           <ul className={`${isCompanyOpen ? 'block' : 'hidden'} md:block space-y-2`}>
-            <li>Email: <a href="mailto:abc@perfectohome.com" className="hover:underline">abc@perfectohome.com</a></li>
-            <li>Phone: <a href="tel:333-333-3333" className="hover:underline">333-333-3333</a></li>
+            <li>Email: <a href="mailto: main@perfectohome.com" className="hover:underline"> main@perfectohome.com</a></li>
+            <li>Phone: <a href="tel:510-993-4542 " className="hover:underline">510-993-4542 </a></li>
             <li>Address: 2903 Shattuck Ave, Berkeley, CA, 94705</li>
             <li>Business Hours: 8:00am-8:00pm Monday-Saturday</li>
           </ul>
