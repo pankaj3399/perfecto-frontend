@@ -6,6 +6,7 @@ import { ROUTES } from './RouterConfig';
 import BuyPage from '../pages/BuyPage/BuyPage';
 import Login from '../pages/Login/Login';
 import SignUp from '../pages/SignUp/SignUp';
+import About from '../pages/About/About';
 import RefrralDashboard from '../pages/RefrralDashboard/RefrralDashboard';
 import ListAddress from '../pages/ListAddress/ListAddress';
 import WishList from '../pages/WishList/WishList';
@@ -25,6 +26,7 @@ const Router = () => {
     <div>
       <Routes>
         <Route exact path={ROUTES.Home} element={<RouteWithRole Element={Home} component={Home} />}></Route>
+        <Route exact path={ROUTES.About} element={<RouteWithRole Element={About} component={About} />}></Route>
         <Route exact path={ROUTES.PropertyDetails} element={<RouteWithRole Element={PropertyDetails} component={PropertyDetails} />}></Route>
         <Route exact path={ROUTES.BuyPage} element={<RouteWithRole Element={BuyPage} component={BuyPage} />}></Route>
         <Route exact path={ROUTES.Login} element={<RouteWithRole Element={Login} component={Login} />}></Route>

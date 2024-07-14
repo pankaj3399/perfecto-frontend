@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import Footer from "../../components/Footer/Footer";
 
 const Profile = () => {
     const handleCopy = () => {
@@ -56,6 +57,7 @@ const Profile = () => {
                     )
                 }
             </div>
+            <Footer />
         </div >
     );
 };

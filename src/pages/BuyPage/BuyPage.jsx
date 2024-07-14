@@ -6,6 +6,7 @@ import Filters from "../../components/Filters/Filters";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import cities from "../../data/csvjson.json";
+import Footer from "../../components/Footer/Footer";
 
 const BuyPage = () => {
   const location = useLocation();
@@ -213,7 +214,7 @@ const BuyPage = () => {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };

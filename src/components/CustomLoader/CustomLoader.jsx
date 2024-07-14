@@ -13,7 +13,7 @@ const override = css`
 const CustomLoader = ({ loading }) => {
   return (
     <div className="flex justify-center items-center">
-      <PulseLoader color={"#800080"} loading={loading} css={override} size={20} />
+      <PulseLoader color={"#f08e80"} loading={loading} css={override} size={20} />
     </div>
   );
 };

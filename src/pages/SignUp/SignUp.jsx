@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import Banner from "../../assets/images/hero.jpg";
 
 const SignUp = () => {
   const {
@@ -48,7 +49,17 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen hero-bg">
+    <div className="flex items-center justify-center min-h-screen"
+    style={{
+      backgroundImage: `url(${Banner})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}
+    >
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -4,6 +4,7 @@ import Button from "../../components/Button/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Banner from "../../assets/images/hero.jpg";
 
 const Login = () => {
   const {
@@ -46,7 +47,17 @@ const Login = () => {
   const imageUrl = "https://via.placeholder.com/150";
 
   return (
-    <div className="flex items-center justify-center min-h-screen hero-bg">
+    <div className="flex items-center justify-center min-h-screen"
+    style={{
+      backgroundImage: `url(${Banner})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}
+    >
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
         <h2 className="text-2xl font-bold text-center">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -121,7 +132,7 @@ const Login = () => {
           <p className="text-sm text-center">
             Don't have an account?{" "}
             <span
-              className="text-[#800080] font-medium cursor-pointer"
+              className="text-[#f08e80] font-semibold cursor-pointer"
               onClick={() => navigate("/signup")}
             >
               Signup

@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Cards from "../../components/Cards/Cards";
 import { getCookie } from "../../utils/helper";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer/Footer";
 
 function WishList() {
   // Dummy data for the cards
@@ -67,6 +68,7 @@ function WishList() {
           ))}
         </div>
       </div>
+      <Footer />
     </div >
   );
 }

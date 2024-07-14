@@ -1,6 +1,7 @@
 // src/components/ReferralDashboard.js
 import React from 'react';
 import { Table, Card } from 'antd';
+import Footer from '../../components/Footer/Footer';
 
 const ReferralDashboard = () => {
   // Sample data for the referral table
@@ -44,6 +45,7 @@ const ReferralDashboard = () => {
           <Table dataSource={referralData} columns={columns} pagination={false} />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

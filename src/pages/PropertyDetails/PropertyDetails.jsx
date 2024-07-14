@@ -6,7 +6,7 @@ import Button from "../../components/Button/Button";
 import { IoMdStar, IoMdStarOutline } from "react-icons/io";
 import { FiShare } from "react-icons/fi";
 import Slider from "../../components/Slider/Slider";
-import agent from "../../assets/images/agent.jpg";
+import agent from "../../assets/images/Perfecto Homes Final Logo .png";
 import AgentFrom from "../../components/AgentForm/AgentForm";
 import PaymentCalculator from "../../components/PaymentCalculator/PaymentCalculator";
 import Cards from "../../components/Cards/Cards";
@@ -17,6 +17,7 @@ import axios from "axios";
 import { getCookie } from "../../utils/helper";
 import { FaPen } from "react-icons/fa";
 import LoanModal from "../../components/Modal/LoanModal";
+import Footer from "../../components/Footer/Footer";
 
 const PropertyDetails = () => {
   const navigate = useNavigate();
@@ -284,7 +285,7 @@ const PropertyDetails = () => {
                 variant="white"
                 onClick={copyToClipboard}
               >
-                <FiShare className="ml-2 text-[18px] text-[#800080] transform rotate-90" />
+                <FiShare className="ml-2 text-[18px] text-[#f08e80] transform rotate-90" />
               </Button>
               {user?.role === "admin" && (
                 <Button onClick={() => setIsModalOpen(true)}>
@@ -345,7 +346,7 @@ const PropertyDetails = () => {
                 placeholder="Share"
                 variant="white"
               >
-                <FiShare className="ml-2 text-[18px] text-[#800080] transform rotate-90" />
+                <FiShare className="ml-2 text-[18px] text-[#f08e80] transform rotate-90" />
               </Button>
             </div>
           </div>
@@ -355,7 +356,7 @@ const PropertyDetails = () => {
             </h3>
             {description?.split(" ").length > wordLimit && (
               <button
-                className="text-[#800080] font-semibold hover:underline mt-2"
+                className="text-[#f08e80] font-semibold hover:underline mt-2"
                 onClick={toggleDescription}
               >
                 {showFullDescription ? "See Less" : "See More"}
@@ -367,7 +368,7 @@ const PropertyDetails = () => {
             <div className="flex items-center mt-4">
               <img className="w-[100px] h-[100px] rounded-full" src={agent} />
               <div className="ml-4 text-start">
-                <p className="font-semibold sm:text-[18px] text-[16px] text-[#800080]">
+                <p className="font-semibold sm:text-[18px] text-[16px] text-[#f08e80]">
                   Shana Rohde-Lynch
                 </p>
                 <div className="sm:flex items-center gap-[150px]">
@@ -449,9 +450,9 @@ const PropertyDetails = () => {
             <h3 className="font-semibold text-[20px]">Learn More</h3>
           </div>
           <div className="flex items-center mt-2">
-            <img className="w-[80px] h-[80px] rounded-full" src={agent} />
+            <img className="w-[80px] h-[80px]" src={agent} />
             <div className="ml-4 text-start">
-              <p className="font-semibold text-[16px] sm:text-[18px] text-[#800080]">
+              <p className="font-semibold text-[16px] sm:text-[18px] text-[#f08e80]">
                 Perfecto Agent Specialist
               </p>
               <p className="sm:text-[16px] text-[14px]">Perfecto</p>
@@ -650,7 +651,7 @@ const PropertyDetails = () => {
               {schools.slice(0, visibleSchools).map((school, index) => (
                 <tr key={index} className="border-t">
                   <td className="py-3 px-4">{school.rating}/10</td>
-                  <td className="py-3 px-4 text-[#800080]">{school.name}</td>
+                  <td className="py-3 px-4 text-[#f08e80]">{school.name}</td>
                   <td className="py-3 px-4 sm:table-cell hidden whitespace-normal">
                     {school.type} - Serves this home
                   </td>
@@ -666,14 +667,14 @@ const PropertyDetails = () => {
         <div className="mt-4">
           <button
             onClick={handleToggleView}
-            className="text-[#800080] focus:outline-none"
+            className="text-[#f08e80] focus:outline-none"
           >
             {showMore ? "View more" : "View less"}
           </button>
         </div>
         <p className="text-xs mt-2 text-gray-600">
           School ratings and boundaries are provided by{" "}
-          <a href="https://www.greatschools.org" className="text-[#800080]">
+          <a href="https://www.greatschools.org" className="text-[#f08e80]">
             GreatSchools.org
           </a>{" "}
           and Pitney Bowes. This information should only be used as a reference.
@@ -695,7 +696,7 @@ const PropertyDetails = () => {
               on a lush, hilly peninsula that is set apart from the rest of
               Marin County and overlooks the glistening San Francisco Bay.
             </p>
-            <div className="text-[#800080] flex sm:gap-[100px] gap-[60px]">
+            <div className="text-[#f08e80] flex sm:gap-[100px] gap-[60px]">
               <a href="">Tiburon Guide</a>
               <a href="">All Neighborhoods</a>
             </div>
@@ -713,7 +714,7 @@ const PropertyDetails = () => {
           ))}
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 };

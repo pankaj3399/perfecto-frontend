@@ -58,3 +58,10 @@
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
 }
+
+.gm-ui-hover-effect {
+  width: 8px !important;
+  height: 8px !important;
+  top: -8px; 
+  right: 32px; 
+}

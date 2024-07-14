@@ -3,11 +3,11 @@ import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import useSearch from "../../components/UseSearch/useSearch";
 import { useSelector, useDispatch } from "react-redux";
-import Button from "../Button/Button";
 import { setUser } from "../../feature/user/userSlice";
 import axios from "axios";
 import AddressModal from "../Modal/AddressModal";
 import { getCookie } from "../../utils/helper";
+import Logo from "../../assets/images/LogoNobg.png";
 
 const Navbar = ({
   searchedValue,
@@ -117,12 +117,15 @@ const Navbar = ({
         <div className="cursor-pointer">
           {isHome || isListAddress || isProfile ? (
             <div
-              className={`text-[28px] font-semibold ${
+              className={`text-[28px] font-semibold flex items-center cursor-pointer ${
                 isListAddress || isProfile ? "text-black" : "text-white"
               }`}
               onClick={() => navigate("/")}
             >
-              PERFECTO
+              <div className="flex items-center cursor-pointer">
+                <img src={Logo} alt="Logo" className="h-16 w-auto mr-2" />
+                PERFECTO
+              </div>
             </div>
           ) : (
             <div className="flex gap-8">
@@ -130,9 +133,12 @@ const Navbar = ({
                 className="text-[28px] hidden sm:block font-semibold text-black"
                 onClick={() => navigate("/")}
               >
-                PERFECTO
+                <div className="flex items-center cursor-pointer">
+                  <img src={Logo} alt="Logo" className="h-16 w-auto mr-2" />
+                  PERFECTO
+                </div>
               </h3>
-              <div className="relative inline-block mt-2 sm:mt-0">
+              <div className="relative inline-block mt-2 sm:mt-[20px]">
                 <input
                   className="p-2 sm:p-2 sm:w-[350px] w-[200px] text-black focus:outline-none border text-[14px]"
                   type="text"
@@ -141,7 +147,7 @@ const Navbar = ({
                   onChange={handleSearchInputChange}
                 />
                 <button
-                  className="absolute top-1/2 transform -translate-y-1/2 bg-[#800080] hover:bg-[#9b59b6] p-[11px] sm:p-[11px] sm:mt-[-1.5px]"
+                  className="absolute top-1/2 transform -translate-y-1/2 bg-[#f08e80] hover:bg-[#ccc] p-[11px] sm:p-[11px] sm:mt-[-2px]"
                   onClick={onSearch}
                 >
                   <FaSearch className="text-white" />
@@ -196,8 +202,20 @@ const Navbar = ({
 
       <div className="hidden md:flex space-x-4">
         <a
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
+            isHome
+              ? "text-white hover:bg-[white] p-2 rounded-md"
+              : "text-black my-auto"
+          }`}
+          onClick={() => navigate("/about")}
+        >
+          About
+        </a>
+        <a
+          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
+            isHome
+              ? "text-white hover:bg-[white] p-2 rounded-md"
+              : "text-black my-auto"
           }`}
           onClick={() => navigate("/buy")}
         >
@@ -205,8 +223,10 @@ const Navbar = ({
         </a>
         <a
           target="_blank"
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
+            isHome
+              ? "text-white hover:bg-[white] p-2 rounded-md"
+              : "text-black my-auto"
           }`}
           href="https://arcmortgage.floify.com/r/perfecto-homes"
         >
@@ -215,8 +235,10 @@ const Navbar = ({
 
         <a
           target="_blank"
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
+            isHome
+              ? "text-white hover:bg-[white] p-2 rounded-md"
+              : "text-black my-auto"
           }`}
           href="https://www.azibo.com/rent-payments"
         >
@@ -224,8 +246,10 @@ const Navbar = ({
         </a>
         <a
           target="_blank"
-          className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
-            isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
+          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
+            isHome
+              ? "text-white hover:bg-[white] p-2 rounded-md"
+              : "text-black my-auto"
           }`}
           onClick={() => navigate("/wishlist")}
         >
@@ -242,9 +266,9 @@ const Navbar = ({
               Welcome, {user?.full_name.split(" ")[0]}
             </span>
             <p
-              className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+              className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
                 isHome
-                  ? "text-white hover:bg-[white] p-2"
+                  ? "text-white hover:bg-[white] p-2 rounded-md"
                   : "text-black my-auto"
               }`}
               onClick={handleLogout}
@@ -256,9 +280,9 @@ const Navbar = ({
         ) : (
           <>
             <p
-              className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+              className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
                 isHome
-                  ? "text-white hover:bg-[white] p-2"
+                  ? "text-white hover:bg-[white] p-2 rounded-md"
                   : "text-black my-auto"
               }`}
               onClick={() => navigate("/login")}
@@ -268,9 +292,9 @@ const Navbar = ({
             </p>
 
             <p
-              className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+              className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
                 isHome
-                  ? "text-white hover:bg-[white] p-2"
+                  ? "text-white hover:bg-[white] p-2 rounded-md"
                   : "text-black my-auto"
               }`}
               onClick={() => navigate("/signup")}
@@ -282,7 +306,7 @@ const Navbar = ({
         )}
         {(user?.role === "agent" || user?.role === "seller") && (
           <p
-            className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+            className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
               isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
             }`}
             onClick={openModal}
@@ -292,7 +316,7 @@ const Navbar = ({
         )}
         {user.role === "admin" && (
           <p
-            className={`hover:text-[#800080] text-[16px] font-semibold cursor-pointer ${
+            className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
               isHome ? "text-white hover:bg-[white] p-2" : "text-black my-auto"
             }`}
             onClick={() => navigate("/list-address")}
@@ -306,7 +330,7 @@ const Navbar = ({
       <div className="md:hidden flex items-center mt-[10px]">
         <button
           onClick={toggleMobileMenu}
-          className="text-[24px] font-semibold text-[#800080] rounded"
+          className="text-[24px] font-semibold text-[#f08e80] rounded"
         >
           {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
@@ -318,12 +342,15 @@ const Navbar = ({
       >
         <div className="p-4 flex justify-between items-center">
           <div className="cursor-pointer">
-            <h3
-              className="sm:text-[14px] block font-semibold text-black"
-              onClick={() => navigate("/")}
-            >
-              PERFECTO
-            </h3>
+            <div className="flex items-center cursor-pointer">
+              <img src={Logo} alt="Logo" className="h-16 w-auto mr-2" />
+              <h3
+                className="sm:text-[14px] block font-semibold text-black"
+                onClick={() => navigate("/")}
+              >
+                PERFECTO
+              </h3>
+            </div>
           </div>
           <button
             onClick={toggleMobileMenu}
@@ -342,35 +369,41 @@ const Navbar = ({
             </span>
           )}
           <a
-            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
+            onClick={() => navigate("/about")}
+          >
+            About
+          </a>
+          <a
+            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
             onClick={() => navigate("/buy")}
           >
             Buy
           </a>
           <a
             target="_blank"
-            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
             href="https://arcmortgage.floify.com/r/perfecto-homes"
           >
             Buyer Application
           </a>
           <a
             target="_blank"
-            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
             href="https://www.azibo.com/rent-payments"
           >
             Existing Owner Payment
           </a>
           <a
             target="_blank"
-            className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
             onClick={() => navigate("/wishlist")}
           >
             My Wishlist
           </a>
           {user?.full_name ? (
             <p
-              className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+              className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
               onClick={handleLogout}
             >
               {" "}
@@ -379,14 +412,14 @@ const Navbar = ({
           ) : (
             <>
               <p
-                className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+                className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
                 onClick={() => navigate("/login")}
               >
                 {" "}
                 Login{" "}
               </p>
               <p
-                className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+                className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
                 onClick={() => navigate("/signup")}
               >
                 {" "}
@@ -396,7 +429,7 @@ const Navbar = ({
           )}
           {user?.role === "agent" && (
             <p
-              className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+              className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
               onClick={openModal}
             >
               {" "}
@@ -405,7 +438,7 @@ const Navbar = ({
           )}
           {user.role === "admin" && (
             <p
-              className="block text-black hover:text-[#800080] text-[16px] font-semibold cursor-pointer"
+              className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
               onClick={() => navigate("/list-address")}
             >
               {" "}

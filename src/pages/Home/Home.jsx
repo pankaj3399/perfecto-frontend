@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuilding, faLocation } from "@fortawesome/free-solid-svg-icons";
 import cities from "../../data/csvjson.json";
 import Banner from "../../assets/images/hero.jpg";
+import Footer from "../../components/Footer/Footer";
 
 const Home = () => {
   const [value, setValue] = useState("");
@@ -106,7 +107,7 @@ const Home = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        height: '90vh',
+        height: '98vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -179,7 +180,7 @@ const Home = () => {
           ))}
         </div>
       </div>
-      {/* <Footer /> */}
+     <Footer />
     </div>
   );
 };

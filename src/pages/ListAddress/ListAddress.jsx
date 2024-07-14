@@ -7,6 +7,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import ToastNotificationContainer from '../../components/ToastContainer/ToastContainer';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Footer from '../../components/Footer/Footer';
 
 function ListAddress() {
     const [addresses, setAddresses] = useState([]);
@@ -174,6 +175,7 @@ function ListAddress() {
                     </tbody>
                 </table>
             </div>
+            <Footer />
         </div>
     );
 }

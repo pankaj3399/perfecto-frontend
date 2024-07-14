@@ -45,16 +45,16 @@ export default function ClusterMap({ properties, onBoundsChanged }) {
     const updateMarkers = () => {
       if (mapRef.current && isLoaded) {
         // Clear previous markers
-        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current.forEach((marker) => marker.setMap(null));
         markersRef.current = [];
 
         // Create new markers
-        const newMarkers = properties.map(point => {
+        const newMarkers = properties.map((point) => {
           const marker = new window.google.maps.Marker({
             position: {
               lat: parseFloat(point.latitude),
               lng: parseFloat(point.longitude),
-            }
+            },
           });
 
           marker.addListener("click", () => handleMarkerClick(point));
@@ -67,12 +67,17 @@ export default function ClusterMap({ properties, onBoundsChanged }) {
           markerClustererRef.current.clearMarkers();
           markerClustererRef.current.addMarkers(markersRef.current);
         } else {
-          markerClustererRef.current = new MarkerClusterer({ markers: markersRef.current, map: mapRef.current });
+          markerClustererRef.current = new MarkerClusterer({
+            markers: markersRef.current,
+            map: mapRef.current,
+          });
         }
       }
     };
 
-    if (JSON.stringify(prevPropertiesRef.current) !== JSON.stringify(properties)) {
+    if (
+      JSON.stringify(prevPropertiesRef.current) !== JSON.stringify(properties)
+    ) {
       updateMarkers();
       prevPropertiesRef.current = properties; // Update the cached properties
     }
@@ -89,21 +94,24 @@ export default function ClusterMap({ properties, onBoundsChanged }) {
   };
 
   // Debounced version of handleBoundsChanged
-  const debouncedHandleBoundsChanged = useCallback(debounce(() => {
-    if (mapRef.current) {
-      const bounds = mapRef.current.getBounds();
-      if (bounds && onBoundsChanged) {
-        const ne = bounds.getNorthEast();
-        const sw = bounds.getSouthWest();
-        onBoundsChanged({
-          minLat: sw.lat(),
-          maxLat: ne.lat(),
-          minLng: sw.lng(),
-          maxLng: ne.lng(),
-        });
+  const debouncedHandleBoundsChanged = useCallback(
+    debounce(() => {
+      if (mapRef.current) {
+        const bounds = mapRef.current.getBounds();
+        if (bounds && onBoundsChanged) {
+          const ne = bounds.getNorthEast();
+          const sw = bounds.getSouthWest();
+          onBoundsChanged({
+            minLat: sw.lat(),
+            maxLat: ne.lat(),
+            minLng: sw.lng(),
+            maxLng: ne.lng(),
+          });
+        }
       }
-    }
-  }, 300), [onBoundsChanged]);
+    }, 300),
+    [onBoundsChanged]
+  );
 
   if (loadError) return "Error loading maps";
   if (!isLoaded) return "Loading Maps";
@@ -131,18 +139,32 @@ export default function ClusterMap({ properties, onBoundsChanged }) {
             onCloseClick={() => setSelectedProperty(null)}
           >
             <div
-              className="bg-white text-[#800080] p-6 rounded-md shadow-md text-center text-sm font-bold flex flex-col items-start cursor-pointer"
+              className="bg-white text-[#f08e80] gap-3 text-center text-[12px] font-medium flex  items-start cursor-pointer w-[190px]"
               onClick={() => handleNavigate(selectedProperty._id)}
             >
               <div>
-                {selectedProperty.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })}
+                <img
+                  src={
+                    selectedProperty.image ||
+                    (selectedProperty.propertyImages &&
+                      selectedProperty.propertyImages[0])
+                  }
+                  alt={selectedProperty.name}
+                  className="w-auto h-[68px] object-cover rounded-md"
+                />
               </div>
-              <div>{selectedProperty.name}</div>
+              <div className="flex flex-col items-start mt-2">
+                {/* <div>
+                  {selectedProperty.price.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })}
+                </div> */}
+                <div>Bath: {selectedProperty?.baths} </div>
+                <div>Beds: {selectedProperty?.beds}</div>
+              </div>
             </div>
           </InfoWindow>
         )}
