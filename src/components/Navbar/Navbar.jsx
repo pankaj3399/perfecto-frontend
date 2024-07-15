@@ -75,13 +75,26 @@ const Navbar = ({
   };
 
   const handleLogout = () => {
+    const deleteCookie = (name, path, domain) => {
+      if (path === undefined) {
+        path = '/';
+      }
+      if (domain === undefined) {
+        domain = window.location.hostname;
+      }
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; domain=${domain};`;
+    };
+  
+    // Get all cookies
     const cookies = document.cookie.split(";");
     for (const cookie of cookies) {
       const [key] = cookie.trim().split("=");
-      document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+      deleteCookie(key);
     }
+  
     dispatch(setUser({ email: "", full_name: "", role: "" }));
   };
+  
 
   useEffect(() => {
     const access_token = getCookie("access_token");
