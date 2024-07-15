@@ -8,6 +8,7 @@ import axios from "axios";
 import AddressModal from "../Modal/AddressModal";
 import { getCookie } from "../../utils/helper";
 import Logo from "../../assets/images/LogoNobg.png";
+import Cookies from 'js-cookie';
 
 const Navbar = ({
   searchedValue,
@@ -75,26 +76,16 @@ const Navbar = ({
   };
 
   const handleLogout = () => {
-    const deleteCookie = (name, path, domain) => {
-      if (path === undefined) {
-        path = '/';
-      }
-      if (domain === undefined) {
-        domain = window.location.hostname;
-      }
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}; domain=${domain};`;
-    };
-  
-    // Get all cookies
-    const cookies = document.cookie.split(";");
-    for (const cookie of cookies) {
-      const [key] = cookie.trim().split("=");
-      deleteCookie(key);
-    }
-  
-    dispatch(setUser({ email: "", full_name: "", role: "" }));
+    // Remove cookies
+    Cookies.remove('access_token', { path: '/' });
+    Cookies.remove('token_type', { path: '/' });
+
+    // Clear user state
+    dispatch(setUser({ email: '', full_name: '', role: '' }));
+
+    // Navigate to login or homepage
+    navigate("/login");
   };
-  
 
   useEffect(() => {
     const access_token = getCookie("access_token");
