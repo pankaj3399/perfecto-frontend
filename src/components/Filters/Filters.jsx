@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Select from "../Select/Select";
 import Button from "../Button/Button";
 
@@ -70,21 +70,37 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
     }
   };
 
+  // Debounce function
+  const debounce = (func, delay) => {
+    let debounceTimer;
+    return function (...args) {
+      const context = this;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    };
+  };
+
+  // Debounced versions of setMinPrice and setMaxPrice
+  const debouncedSetMinPrice = useCallback(debounce(setMinPrice, 500), []);
+  const debouncedSetMaxPrice = useCallback(debounce(setMaxPrice, 500), []);
+
   const handleMaxPriceChange = (e) => {
     e.preventDefault();
-    setMaxPrice(e.target.value);
+    debouncedSetMaxPrice(e.target.value);
   };
 
   const handleMinPriceChange = (e) => {
     e.preventDefault();
-    setMinPrice(e.target.value);
+    debouncedSetMinPrice(e.target.value);
   };
 
   return (
     <div>
       <div className="flex gap-4 items-center p-4 bg-gray-100 rounded-md shadow-sm">
         <div className="flex flex-col">
-          <label className="font-medium sm:text-md text-[14px] mb-1">Minimum Price</label>
+          <label className="font-medium sm:text-md text-[14px] mb-1">
+            Minimum Price
+          </label>
           <input
             type="number"
             name="minPrice"
@@ -94,7 +110,9 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
           />
         </div>
         <div className="flex flex-col">
-          <label className="font-medium sm:text-md text-[14px] mb-1">Maximum Price</label>
+          <label className="font-medium sm:text-md text-[14px] mb-1">
+            Maximum Price
+          </label>
           <input
             type="number"
             name="maxPrice"
@@ -253,9 +271,9 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
                 <div className="grid grid-cols-2 gap-4">
                   <Select
                     options={[
-                      { value: 1, label: "1 acre" },
-                      { value: 2, label: "2 acres" },
-                      { value: 3, label: "3 acres" },
+                      { value: 1000, label: "1000 sqft" },
+                      { value: 2000, label: "2000 sqft" },
+                      { value: 3000, label: "3000 sqft" },
                     ]}
                     name="minLot"
                     placeholder="No Min"
@@ -266,9 +284,9 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
                   />
                   <Select
                     options={[
-                      { value: 1, label: "1 acre" },
-                      { value: 2, label: "2 acres" },
-                      { value: 3, label: "3 acres" },
+                      { value: 1000, label: "1000 sqft" },
+                      { value: 2000, label: "2000 sqft" },
+                      { value: 3000, label: "3000 sqft" },
                     ]}
                     name="maxLot"
                     placeholder="No Max"
@@ -281,7 +299,7 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
               </div>
               <div className="flex flex-col">
                 <label className="font-medium text-lg mb-2">Year Built</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 grid-cols-1 gap-4">
                   <Select
                     options={generateYearOptions()}
                     name="minYearBuilt"
@@ -303,11 +321,12 @@ function Filters({ onSubmit, setMinPrice, setMaxPrice }) {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end border-t pt-4">
-              <Button className="p-4" onClick={handleSubmit}>
-                Search
-              </Button>
-            </div>
+            <Button
+              variant="primary"
+              className="w-full py-2 px-4"
+              onClick={handleSubmit}
+              placeholder="Apply Filters"
+            />
           </div>
         </div>
       )}

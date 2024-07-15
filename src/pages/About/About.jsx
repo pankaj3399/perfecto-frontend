@@ -8,13 +8,11 @@ import {
   FaLightbulb,
   FaHandshake,
   FaLaptop,
-  FaArrowAltCircleDown,
-  FaArrowAltCircleLeft,
   FaArrowAltCircleRight,
 } from "react-icons/fa";
 import Navbar from "../../components/Navbar/Navbar";
 import Banner from "../../assets/images/about.jpeg";
-import Banner2 from "../../assets/images/banner.jpeg";
+import Banner2 from "../../assets/images/hero.jpg";
 import Footer from "../../components/Footer/Footer";
 
 function About() {
@@ -30,7 +28,7 @@ function About() {
               <h2 className="text-black text-2xl md:text-3xl font-semibold sm:text-left text-center">
                 About Perfecto Homes
               </h2>
-              <div className="sm:w-[325px] w-[260px] border-b-4 border-[#f08e80] mt-1"></div>
+              <div className="sm:w-[308px] w-[260px] border-b-4 border-[#f08e80] mt-1"></div>
             </div>
             <p className="mt-4 text-lg text-justify leading-relaxed">
               Perfecto Home is revolutionizing the real estate industry by
@@ -65,7 +63,7 @@ function About() {
               <h2 className="text-black text-2xl md:text-3xl font-semibold">
                 Our Story
               </h2>
-              <div className="sm:w-[140px] w-[110px] border-b-4 border-[#f08e80] mt-1"></div>
+              <div className="sm:w-[126px] w-[110px] border-b-4 border-[#f08e80] mt-1"></div>
             </div>
             <p className="mt-4 text-lg text-justify leading-relaxed">
               Born from a realization that the traditional home buying process

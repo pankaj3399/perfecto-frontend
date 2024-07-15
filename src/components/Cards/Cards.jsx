@@ -18,13 +18,13 @@ const Cards = ({ image, price, address, beds, baths, sqft, comingSoon, monthlyPa
         <div className="text-[17px] font-bold mb-2">
           <div>
             Monthly Payment : $
-            {monthlyPayment?.toLocaleString() || 8000?.toLocaleString()}{" "}
+            {monthlyPayment?.toLocaleString() || ""}
           </div>
           <div>
             Down Payment : $
-            {downPayment?.toLocaleString() || 20000?.toLocaleString()}
+            {downPayment?.toLocaleString() || ""}
           </div>
-          <div>Terms : {terms || 30} Years</div>
+          <div>Terms : {terms || ""} Years</div>
         </div>
         <div className="text-[17px] font-semibold">{address}</div>
         <div className="flex mt-2 space-x-4 text-sm">

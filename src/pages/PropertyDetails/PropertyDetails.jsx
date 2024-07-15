@@ -18,6 +18,27 @@ import { getCookie } from "../../utils/helper";
 import { FaPen } from "react-icons/fa";
 import LoanModal from "../../components/Modal/LoanModal";
 import Footer from "../../components/Footer/Footer";
+import 'chart.js/auto';
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const PropertyDetails = () => {
   const navigate = useNavigate();
@@ -139,6 +160,9 @@ const PropertyDetails = () => {
     publicRecords,
     wishlisted,
     propertyImages,
+    monthlyPayment,
+    downPayment,
+    terms,
   } = properties;
 
   const goToPropertyDetails = (_id) => {
@@ -227,6 +251,82 @@ const PropertyDetails = () => {
   const displayDescription = showFullDescription
     ? description
     : truncateDescription(description, wordLimit);
+
+  // Monthly Payment Calculation
+  const calculateMonthlyPayment = (principal, rate, term) => {
+    const monthlyRate = rate / 100 / 12;
+    const numPayments = term * 12;
+    return (
+      (principal * monthlyRate) /
+      (1 - Math.pow(1 + monthlyRate, -numPayments))
+    ).toFixed(2);
+  };
+
+  // Calculating "Others Monthly Payment"
+  const othersInterestRate = 7.25; //  interest rate for others
+  const principal = price - downPayment;
+  const othersMonthlyPayment = calculateMonthlyPayment(
+    principal,
+    othersInterestRate,
+    terms
+  );
+
+  
+
+  // Bar chart data and options
+  const data = {
+    labels: ["Perfecto Monthly Payment", "Others Monthly Payment"],
+    datasets: [
+      {
+        label: "Monthly Payments",
+        data: [monthlyPayment, othersMonthlyPayment],
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+        ],
+        borderColor: ["rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)"],
+        borderWidth: 1,
+        barThickness: 80,
+        maxBarThickness: 80,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            let value = tooltipItem.raw;
+            return `$${value.toLocaleString()}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          callback: function (value, index) {
+            return data.labels[index];
+          },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function (value) {
+            return "$" + value.toLocaleString();
+          },
+        },
+      },
+    },
+  
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -418,7 +518,41 @@ const PropertyDetails = () => {
             />
           </div>
         </div>
+        
         <div className="col-span-2 mt-2 sm:px-0 px-[24px]">
+          {monthlyPayment && (
+          <div className="col-span-2 mt-2 sm:px-0 px-[24px]">
+            <p className="text-[14px] text-[#6c6c6c] font-semibold">
+              LISTING UPDATE
+            </p>
+            <div>
+              <div className="flex justify-between items-center sm:text-[16px] text-[14px] mt-2 border-b">
+                <p>Monthly Payment</p>
+                <p>
+                  <strong>${monthlyPayment?.toLocaleString()} / month</strong>
+                </p>
+              </div>
+              <div className="flex justify-between items-center sm:text-[16px] text-[14px] mt-2 border-b">
+                <p>Down Payment</p>
+                <p>
+                  <strong>${downPayment?.toLocaleString()} </strong>
+                </p>
+              </div>
+              <div className="flex justify-between items-center sm:text-[16px] text-[14px] mt-2 border-b">
+                <p>Terms</p>
+                <p>
+                  <strong>{terms}</strong>
+                </p>
+              </div>
+              <div className="mt-4">
+                <h3 className="font-semibold text-[20px]">Property Prices</h3>
+                <div className="mt-2 h-auto w-auto">
+                {monthlyPayment && <Bar data={data} options={options} />}
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
           {/* <p className="text-[14px] text-[#6c6c6c] font-semibold">
             LISTING UPDATED: 05/24/2024 07:46 PM
           </p>
@@ -446,7 +580,7 @@ const PropertyDetails = () => {
               )
             )}
           </div> */}
-          <div className="">
+          <div className="mt-8">
             <h3 className="font-semibold text-[20px]">Learn More</h3>
           </div>
           <div className="flex items-center mt-2">
@@ -704,7 +838,7 @@ const PropertyDetails = () => {
         </div>
       </div>
 
-      <div className="sm:px-[150px] px-[24px] py-[24px]">
+      <div className="sm:px-[150px] px-[24px] pt-[24px] pb-[90px]">
         <h2 className="text-[24px] font-semibold my-4">Similar Homes</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {similarProperties.map((property, index) => (

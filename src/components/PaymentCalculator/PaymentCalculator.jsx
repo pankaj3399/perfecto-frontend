@@ -27,16 +27,13 @@ const PaymentCalculator = ({
     <div className="max-w-full mx-auto">
       <div className="mb-4">
         <label className="block text-gray-700">Term</label>
-        <select
+        <input
+          type="number"
           value={term}
           onChange={(e) => setTerm(+e.target.value)}
           className="mt-1 block w-full p-2 border rounded"
-        >
-          <option value={30}>30 Years Fixed</option>
-          <option value={20}>20 Years Fixed</option>
-          <option value={15}>15 Years Fixed</option>
-          <option value={10}>10 Years Fixed</option>
-        </select>
+          placeholder="Enter term in years"
+        />
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">Home Price</label>
