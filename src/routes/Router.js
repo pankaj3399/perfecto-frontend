@@ -11,6 +11,9 @@ import RefrralDashboard from '../pages/RefrralDashboard/RefrralDashboard';
 import ListAddress from '../pages/ListAddress/ListAddress';
 import WishList from '../pages/WishList/WishList';
 import Profile from '../pages/Profile/Profile';
+import Agent from '../pages/HowItWorks/Agent/Agent';
+import Seller from '../pages/HowItWorks/Seller/Seller';
+import Buyer from '../pages/HowItWorks/Buyer/Buyer';
 
 const Router = () => {
 
@@ -35,6 +38,9 @@ const Router = () => {
         <Route exact path={ROUTES.ListAddress} element={<RouteWithRole Element={ListAddress} component={ListAddress} />}></Route>
         <Route exact path={ROUTES.WishList} element={<RouteWithRole Element={WishList} component={WishList} />}></Route>
         <Route exact path={ROUTES.Profile} element={<RouteWithRole Element={Profile} component={Profile} />}></Route>
+        <Route exact path={ROUTES.Agent} element={<RouteWithRole Element={Agent} component={Agent} />}></Route>
+        <Route exact path={ROUTES.Buyer} element={<RouteWithRole Element={Buyer} component={Buyer} />}></Route>
+        <Route exact path={ROUTES.Seller} element={<RouteWithRole Element={Seller} component={Seller} />}></Route>
       </Routes>
     </div>
   )

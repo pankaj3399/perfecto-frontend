@@ -10,4 +10,7 @@ export const ROUTES = {
     ListAddress: '/list-address',
     WishList: '/wishlist',
     Profile: '/profile',
+    Agent: '/how-it-works/agent',
+    Buyer:'/how-it-works/buyer',
+    Seller:'/how-it-works/seller',
 }

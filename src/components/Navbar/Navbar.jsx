@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaSearch,
+  FaChevronDown,
+  FaChevronRight,
+} from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import useSearch from "../../components/UseSearch/useSearch";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,7 +14,7 @@ import axios from "axios";
 import AddressModal from "../Modal/AddressModal";
 import { getCookie } from "../../utils/helper";
 import Logo from "../../assets/images/LogoNobg.png";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const Navbar = ({
   searchedValue,
@@ -32,6 +38,8 @@ const Navbar = ({
     useSearch({ searchedValue, properties });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpenMobile, setIsDropdownOpenMobile] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -77,11 +85,11 @@ const Navbar = ({
 
   const handleLogout = () => {
     // Remove cookies
-    Cookies.remove('access_token', { path: '/' });
-    Cookies.remove('token_type', { path: '/' });
+    Cookies.remove("access_token", { path: "/" });
+    Cookies.remove("token_type", { path: "/" });
 
     // Clear user state
-    dispatch(setUser({ email: '', full_name: '', role: '' }));
+    dispatch(setUser({ email: "", full_name: "", role: "" }));
 
     // Navigate to login or homepage
     navigate("/login");
@@ -110,6 +118,15 @@ const Navbar = ({
     fetchUserDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleOptionClick = (path) => {
+    navigate(path);
+    setIsDropdownOpen(false);
+  };
 
   return (
     <nav
@@ -225,29 +242,40 @@ const Navbar = ({
         >
           Buy
         </a>
-        <a
-          target="_blank"
-          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
-            isHome
-              ? "text-white hover:bg-[white] p-2 rounded-md"
-              : "text-black my-auto"
-          }`}
-          href="https://arcmortgage.floify.com/r/perfecto-homes"
-        >
-          Buyer Application
-        </a>
-
-        <a
-          target="_blank"
-          className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
-            isHome
-              ? "text-white hover:bg-[white] p-2 rounded-md"
-              : "text-black my-auto"
-          }`}
-          href="https://www.azibo.com/rent-payments"
-        >
-          Existing Owner Payment
-        </a>
+        <div className="relative">
+          <a
+            className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer flex items-center ${
+              isHome
+                ? "text-white hover:bg-[white] p-2 rounded-md"
+                : "text-black my-auto"
+            }`}
+            onClick={toggleDropdown}
+          >
+            How it works <FaChevronDown className="ml-1" />
+          </a>
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 left-0 bg-white text-black shadow-md rounded-md w-40">
+              <a
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleOptionClick("/how-it-works/seller")}
+              >
+                For Seller
+              </a>
+              <a
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleOptionClick("/how-it-works/agent")}
+              >
+                For Agent
+              </a>
+              <a
+                className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => handleOptionClick("/how-it-works/buyer")}
+              >
+                For Buyer
+              </a>
+            </div>
+          )}
+        </div>
         <a
           target="_blank"
           className={`hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer ${
@@ -384,20 +412,45 @@ const Navbar = ({
           >
             Buy
           </a>
-          <a
-            target="_blank"
-            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
-            href="https://arcmortgage.floify.com/r/perfecto-homes"
-          >
-            Buyer Application
-          </a>
-          <a
-            target="_blank"
-            className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
-            href="https://www.azibo.com/rent-payments"
-          >
-            Existing Owner Payment
-          </a>
+          <div className="relative">
+            <a
+              className="text-[16px] font-semibold cursor-pointer flex items-center"
+              onClick={() => setIsDropdownOpenMobile(!isDropdownOpenMobile)}
+            >
+              How it works <FaChevronDown className="ml-1" />
+            </a>
+            {isDropdownOpenMobile && (
+              <div className="absolute top-full mt-2 left-0 bg-white text-black shadow-md rounded-md w-40">
+                <a
+                  className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigate("/how-it-works/seller");
+                  }}
+                >
+                  For Seller
+                </a>
+                <a
+                  className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigate("/how-it-works/agent");
+                  }}
+                >
+                  For Agent
+                </a>
+                <a
+                  className="block px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigate("/how-it-works/buyer");
+                  }}
+                >
+                  For Buyer
+                </a>
+              </div>
+            )}
+          </div>
           <a
             target="_blank"
             className="block text-black hover:text-[#f08e80] text-[16px] font-semibold cursor-pointer"
